@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NetCoreAopEssentials.Cache
@@ -88,7 +87,29 @@ namespace NetCoreAopEssentials.Cache
         /// <returns></returns>
         private static bool IsSerializableRecursive(Type type)
         {
-            return type.IsSerializable && !type.GetProperties().Any(p => IsSerializableRecursive(p.PropertyType) == false); 
+            // primitives and strings are serializable
+            if(type.IsPrimitive || type == typeof(string))
+            {
+                return true;
+            }
+
+            // not serializable 
+            if(!type.IsSerializable)
+            {
+                return false;
+            }
+
+            // for the rest try to create an instance and serialize it 
+            try
+            {
+                var obj = Activator.CreateInstance(type);
+                return Serialize(null, obj) != null;
+
+            } catch(Exception)
+            {
+                return false;
+            }
+
         }
 
     }

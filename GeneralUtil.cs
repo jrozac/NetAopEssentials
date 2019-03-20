@@ -20,7 +20,7 @@ namespace NetCoreAopEssentials
         /// <param name="args"></param>
         public static void LogError(IServiceProvider provider, string logCategory, string mesage, params object[] args)
         {
-            var factory = provider.GetService<ILoggerFactory>();
+            var factory = provider?.GetService<ILoggerFactory>();
             var logger = factory?.CreateLogger(logCategory);
             logger?.LogError(mesage, args);
         }
@@ -34,7 +34,7 @@ namespace NetCoreAopEssentials
         /// <param name="args"></param>
         public static void LogError<T>(IServiceProvider provider, string message, params object[] args) where T : class
         {
-            var logger = provider.GetService<ILogger<T>>();
+            var logger = provider?.GetService<ILogger<T>>();
             logger?.LogError(message, args);
         }
 
@@ -47,7 +47,7 @@ namespace NetCoreAopEssentials
         /// <param name="args"></param>
         public static void LogInformation<T>(IServiceProvider provider, string message, params object[] args) where T : class
         {
-            var logger = provider.GetService<ILogger<T>>();
+            var logger = provider?.GetService<ILogger<T>>();
             logger?.LogInformation(message, args);
         }
 
@@ -60,7 +60,7 @@ namespace NetCoreAopEssentials
         /// <param name="args"></param>
         public static void LogWarning<T>(IServiceProvider provider, string message, params object[] args) where T : class
         {
-            var logger = provider.GetService<ILogger<T>>();
+            var logger = provider?.GetService<ILogger<T>>();
             logger?.LogWarning(message, args);
         }
 
