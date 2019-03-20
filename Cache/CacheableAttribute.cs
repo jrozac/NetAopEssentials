@@ -18,7 +18,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="useCustomProvider"></param>
-        public CacheableAttribute(string keyTemplate, int timeoutMs, string groupId = null, 
+        public CacheableAttribute(string keyTemplate, int timeoutMs = 0, string groupId = null, 
             EnumCacheProvider provider = EnumCacheProvider.Memory, bool useCustomProvider = false)
         {
             KeyTemplate = keyTemplate;

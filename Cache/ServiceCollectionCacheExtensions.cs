@@ -18,7 +18,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddScopedCacheable<TService,TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider)
+        public static IServiceCollection AddScopedCacheable<TService,TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
         {
@@ -34,7 +34,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonCacheable<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider)
+        public static IServiceCollection AddSingletonCacheable<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
         {
@@ -50,7 +50,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTransientCacheable<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider)
+        public static IServiceCollection AddTransientCacheable<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
         {
@@ -66,7 +66,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        private static AspectConfigurationBuilder<TService,TImplementation> RegisterCacheProxy<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider)
+        private static AspectConfigurationBuilder<TService,TImplementation> RegisterCacheProxy<TService, TImplementation>(this IServiceCollection collection, int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
         {

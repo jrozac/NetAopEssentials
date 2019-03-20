@@ -31,23 +31,18 @@ namespace NetCoreAopEssentials.Cache
                 return new Func<object[], object, string>((args, retval) => keyTpl);
             }
 
-            // prepare retrive map 
-            var indexMap = fields.ToDictionary(f => GetKeyFieldIndex(f, methodInfo), f => f);
-            var retrieveFunc = Enumerable.Range(0, indexMap.Keys.Max()+2).Select(ix =>
-            {
-                var field = indexMap.ContainsKey(ix) ? indexMap[ix] : null;
-                return field != null ? GetFieldValueFunc(field, methodInfo) : null;
-            }).ToArray();
+            // prepare retrieve funcs
+            var retrieveFunc = fields.Select(f => GetFieldValueFunc(f, methodInfo)).ToArray();
 
             // set replace template 
             string tpl = keyTpl;
-            indexMap.Keys.ToList().ForEach(ix => tpl = tpl.Replace("{" + indexMap[ix] + "}", "{" + ix.ToString() + "}"));
+            int i = 0;
+            fields.ToList().ForEach( f => tpl = tpl.ReplaceFirst("{" + f + "}", "{" + i++ + "}"));
 
             // return key mapper
             return new Func<object[], object, string>((args, retval) => {
                 var formatArgs = retrieveFunc.Select(f => f?.Invoke(retval, args)).ToArray();
-                bool invalid = indexMap.Keys.Any(ix => formatArgs[ix] == null);
-                if(invalid)
+                if(formatArgs.Any(v => v ==null))
                 {
                     return null;
                 }
@@ -146,6 +141,9 @@ namespace NetCoreAopEssentials.Cache
                     throw new ArgumentException($"Field {paramName} is not valid.");
                 }
                 position = 1 + paramIndex;
+            }
+            else if(methodInfo.ReturnType == typeof(void)) {
+                throw new ArgumentException("Method returns void.");
             }
 
             // return
