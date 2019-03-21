@@ -99,6 +99,14 @@ namespace NetCoreAopEssentials
             where TImplementation : class, TService
             where TAspect : class, IAspect
         {
+
+            // check if already exists 
+            var currentAspect = GetRegisteredAspect<TImplementation, TAspect>();
+            if(currentAspect != null)
+            {
+                throw new ArgumentException($"Another {typeof(TAspect)} is already defined.");
+            }
+
             // create aspect list
             if(!Aspects.ContainsKey(typeof(TImplementation)))
             {
@@ -112,6 +120,25 @@ namespace NetCoreAopEssentials
                 aspect.ConfigureFor<TImplementation>();
                 Aspects[typeof(TImplementation)].Add(aspect);
             }
+        }
+
+        /// <summary>
+        /// Get registered aspect
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <typeparam name="TAspect"></typeparam>
+        /// <returns></returns>
+        internal static TAspect GetRegisteredAspect<TImplementation, TAspect>()
+            where TAspect : IAspect
+            where TImplementation : class
+        {
+            // get aspects for type
+            var aspects = Aspects.ContainsKey(typeof(TImplementation)) ? Aspects[typeof(TImplementation)] : null;
+            if (aspects == null)
+            {
+                return default(TAspect);
+            }
+            return (TAspect)aspects.FirstOrDefault(a => a.GetType() == typeof(TAspect));
         }
 
     }
