@@ -18,7 +18,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="useCustomProvider"></param>
-        public CacheableAttribute(string keyTemplate, int timeoutMs = 0, string groupId = null, 
+        public CacheableAttribute(string keyTemplate, long timeoutMs = 0, string groupId = null, 
             EnumCacheProvider provider = EnumCacheProvider.Memory, bool useCustomProvider = false)
         {
             KeyTemplate = keyTemplate;
@@ -45,6 +45,6 @@ namespace NetCoreAopEssentials.Cache
         /// <summary>
         /// Timeout 
         /// </summary>
-        public int TimeoutMs { get; private set; }
+        public long TimeoutMs { get; private set; }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace NetCoreAopEssentials.Cache
 {
@@ -45,12 +43,12 @@ namespace NetCoreAopEssentials.Cache
         /// <summary>
         /// Cache timeout in milliseconds 
         /// </summary>
-        public int TimeoutMs { get; set; }
+        public long TimeoutMs { get; set; }
 
         /// <summary>
         /// Added to timeout 
         /// </summary>
-        public Func<object, int> TimeoutMsOffsetFunc { get; set; }
+        public Func<object, long> TimeoutMsOffsetFunc { get; set; }
 
         /// <summary>
         /// Function which returns key based 

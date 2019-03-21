@@ -20,7 +20,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="importAttributes"></param>
         /// <returns></returns>
         public static CacheConfigurationBuilder<TService, TImplementation> EnableMethodsCache<TService, TImplementation>(this AspectConfigurationBuilder<TService, TImplementation> config,
-                int defaultTimeoutMs = 60000, EnumCacheProvider defaultProvider = EnumCacheProvider.Memory, bool importAttributesConfiguration = true)
+                long defaultTimeoutMs = 60000, EnumCacheProvider defaultProvider = EnumCacheProvider.Memory, bool importAttributesConfiguration = true)
             where TService : class
             where TImplementation : class, TService
         {
@@ -48,7 +48,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="config"></param>
         /// <returns></returns>
         public static AspectConfigurationBuilder<TService, TImplementation> RegisterAtributesCache<TService, TImplementation>(this AspectConfigurationBuilder<TService, TImplementation> config, 
-                int defaultTimeoutMs = 60000,  EnumCacheProvider defaultCacheProvider = EnumCacheProvider.Memory, string keyPrefix = null)
+                long defaultTimeoutMs = 60000,  EnumCacheProvider defaultCacheProvider = EnumCacheProvider.Memory, string keyPrefix = null)
             where TService : class
             where TImplementation : class, TService
         {

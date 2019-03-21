@@ -145,10 +145,10 @@ namespace NetCoreAopEssentials.Cache
             }
 
             // get timeout
-            var timeoutOffset = 0;
+            long timeoutOffset = 0;
             if(cfg.TimeoutMsOffsetFunc != null)
             {
-                timeoutOffset = GeneralUtil.TryRun<CacheAspect, int>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
+                timeoutOffset = GeneralUtil.TryRun<CacheAspect, long>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
             }
             var timeout = cfg.TimeoutMs + timeoutOffset;
             if(timeout <= 0)

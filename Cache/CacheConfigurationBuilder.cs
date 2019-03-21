@@ -35,7 +35,7 @@ namespace NetCoreAopEssentials.Cache
         /// <summary>
         /// Default timeout
         /// </summary>
-        private readonly int _defaultTimeoutMs;
+        private readonly long _defaultTimeoutMs;
 
         /// <summary>
         /// Default constructor
@@ -43,7 +43,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="aspectConfiguration"></param>
         /// <param name="defaultTimeoutMs"></param>
         /// <param name="defaultProvider"></param>
-        internal CacheConfigurationBuilder(AspectConfigurationBuilder<TService, TImplementation> aspectConfiguration, int defaultTimeoutMs, EnumCacheProvider defaultProvider)
+        internal CacheConfigurationBuilder(AspectConfigurationBuilder<TService, TImplementation> aspectConfiguration, long defaultTimeoutMs, EnumCacheProvider defaultProvider)
         {
             _aspectConfiguration = aspectConfiguration;
             _defaultProvider = defaultProvider;
@@ -111,7 +111,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="timeoutFunc">Function to determinate additional timeout time. Incoming parameters are function results.</param>
         /// <returns></returns>
         public CacheConfigurationBuilder<TService, TImplementation> RegisterCacheableMethod<TRet>(Expression<Func<TImplementation, TRet>> methodExpr, string keyTpl,
-            int timeout = 0, string groupId = null, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null, Func<TRet, int> timeoutFunc = null)
+            long timeout = 0, string groupId = null, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null, Func<TRet, long> timeoutFunc = null)
         {
 
             // set cache definition
@@ -201,8 +201,8 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="cacheResultFunc"></param>
         /// <param name="timeoutFunc"></param>
         /// <returns></returns>
-        private MethodCacheConfiguration CreateCacheConfiguration<TRet>(MethodInfo methodInfo, EnumCacheAction action, string keyTpl, int timeout, 
-            string groupId, EnumCacheProvider? provider, Func<TRet, bool> cacheResultFunc = null, Func<TRet, int> timeoutFunc = null)
+        private MethodCacheConfiguration CreateCacheConfiguration<TRet>(MethodInfo methodInfo, EnumCacheAction action, string keyTpl, long timeout, 
+            string groupId, EnumCacheProvider? provider, Func<TRet, bool> cacheResultFunc = null, Func<TRet, long> timeoutFunc = null)
         {
             var cfg = new MethodCacheConfiguration
             {
@@ -235,7 +235,7 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="provider"></param>
         /// <returns></returns>
         private MethodCacheConfiguration CreateCacheConfiguration(MethodInfo methodInfo, EnumCacheAction action, 
-            string keyTpl, int timeout, string groupId, EnumCacheProvider? provider)
+            string keyTpl, long timeout, string groupId, EnumCacheProvider? provider)
         {
             var cfg = new MethodCacheConfiguration
             {
