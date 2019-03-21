@@ -15,11 +15,10 @@ namespace NetCoreAopEssentials.Cache
         /// <typeparam name="T"></typeparam>
         /// <param name="provider"></param>
         /// <param name="key"></param>
-        public static CacheManager<TService, TImplementation> GetCacheManager<TService,TImplementation>(this IServiceProvider provider)
-            where TService : class
-            where TImplementation : class, TService
+        public static CacheManager<TImplementation> GetCacheManager<TImplementation>(this IServiceProvider provider)
+            where TImplementation : class
         {
-            return new CacheManager<TService, TImplementation>(provider);
+            return new CacheManager<TImplementation>(provider);
         }
 
     }

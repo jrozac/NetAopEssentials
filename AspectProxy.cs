@@ -10,9 +10,7 @@ namespace NetCoreAopEssentials
     /// <summary>
     /// Cache proxy 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class AspectProxy<TService> : DispatchProxy
-        where TService : class
+    public class AspectProxy : DispatchProxy
     {
 
         /// <summary>
@@ -23,7 +21,7 @@ namespace NetCoreAopEssentials
         /// <summary>
         /// Service 
         /// </summary>
-        private TService _service;
+        private object _service;
 
         /// <summary>
         /// Service provider  
@@ -71,9 +69,12 @@ namespace NetCoreAopEssentials
         /// <summary>
         /// Create proxy instance 
         /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
         /// <param name="sp"></param>
         /// <returns></returns>
-        public static TService Create<TImplementation>(IServiceProvider sp)
+        public static TService Create<TService, TImplementation>(IServiceProvider sp)
+            where TService : class
             where TImplementation : class,TService
         {
 
@@ -81,9 +82,9 @@ namespace NetCoreAopEssentials
             TService impl = ActivatorUtilities.CreateInstance<TImplementation>(sp);
 
             // create proxy 
-            object proxy = Create<TService, AspectProxy<TService>>();
-            ((AspectProxy<TService>)proxy)._service = impl;
-            ((AspectProxy<TService>)proxy)._serviceProvider = sp;
+            object proxy = Create<TService, AspectProxy>();
+            ((AspectProxy)proxy)._service = impl;
+            ((AspectProxy)proxy)._serviceProvider = sp;
 
             // return
             return (TService) proxy;
@@ -92,10 +93,12 @@ namespace NetCoreAopEssentials
         /// <summary>
         /// Configure aspect for type 
         /// </summary>
+        /// <typeparam name="TService"></typeparam>
         /// <typeparam name="TImplementation"></typeparam>
         /// <typeparam name="TAspect"></typeparam>
         /// <param name="customCreate"></param>
-        internal static void Configure<TImplementation,TAspect>(Func<TAspect> customCreate = null)
+        internal static void Configure<TService, TImplementation,TAspect>(Func<TAspect> customCreate = null)
+            where TService : class
             where TImplementation : class, TService
             where TAspect : class, IAspect
         {

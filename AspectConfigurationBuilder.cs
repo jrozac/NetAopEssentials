@@ -37,7 +37,7 @@ namespace NetCoreAopEssentials
         public AspectConfigurationBuilder<TService, TImplementation> RegisterAspect<TAspect>(Func<TAspect> customCreate = null)
             where TAspect : class, IAspect
         {
-            AspectProxy<TService>.Configure<TImplementation, TAspect>(customCreate);
+            AspectProxy.Configure<TService, TImplementation, TAspect>(customCreate);
             return this;
         }
 
@@ -48,7 +48,7 @@ namespace NetCoreAopEssentials
         public IServiceCollection AddScoped()
         {
             _services.AddScoped<TImplementation, TImplementation>();
-            _services.AddScoped((provider) => AspectProxy<TService>.Create<TImplementation>(provider));
+            _services.AddScoped((provider) => AspectProxy.Create<TService,TImplementation>(provider));
             return _services;
         }
 
@@ -59,7 +59,7 @@ namespace NetCoreAopEssentials
         public IServiceCollection AddTransient()
         {
             _services.AddTransient<TImplementation, TImplementation>();
-            _services.AddTransient((provider) => AspectProxy<TService>.Create<TImplementation>(provider));
+            _services.AddTransient((provider) => AspectProxy.Create<TService,TImplementation>(provider));
             return _services;
         }
 
@@ -70,7 +70,7 @@ namespace NetCoreAopEssentials
         public IServiceCollection AddSingleton()
         {
             _services.AddSingleton<TImplementation, TImplementation>();
-            _services.AddSingleton((provider) => AspectProxy<TService>.Create<TImplementation>(provider));
+            _services.AddSingleton((provider) => AspectProxy.Create<TService,TImplementation>(provider));
             return _services;
         }
 

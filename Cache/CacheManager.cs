@@ -9,11 +9,9 @@ namespace NetCoreAopEssentials.Cache
     /// <summary>
     /// Cache manager
     /// </summary>
-    /// <typeparam name="TService"></typeparam>
     /// <typeparam name="TImplementation"></typeparam>
-    public class CacheManager<TService, TImplementation>
-        where TService : class
-        where TImplementation : class, TService
+    public class CacheManager<TImplementation>
+        where TImplementation : class
     {
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace NetCoreAopEssentials.Cache
         internal CacheManager(IServiceProvider provider)
         {
             // get aspect
-            var aspect = AspectProxy<TService>.GetRegisteredAspect<TImplementation, CacheAspect>();
+            var aspect = AspectProxy.GetRegisteredAspect<TImplementation, CacheAspect>();
             if(aspect == null)
             {
                 throw new ArgumentException($"Aspect is not configured for {typeof(TImplementation)}.");
