@@ -22,7 +22,7 @@ namespace NetCoreAopEssentials.Cache
         /// <summary>
         /// Key prefix
         /// </summary>
-        private readonly string _keyPrefix;
+        internal string KeyPrefix { get; private set; }
 
         /// <summary>
         /// Constructor which injects definitions
@@ -31,7 +31,7 @@ namespace NetCoreAopEssentials.Cache
         internal CacheAspect(Dictionary<string, MethodCacheConfiguration> cacheDefinitions, string keyPrefix)
         {
             _cacheDefinitions = cacheDefinitions;
-            _keyPrefix = keyPrefix;
+            KeyPrefix = keyPrefix;
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace NetCoreAopEssentials.Cache
             {
                 return null;
             }
-            var key = _keyPrefix + keyItem;
+            var key = KeyPrefix + keyItem;
                 
             // return key                
             return key;
