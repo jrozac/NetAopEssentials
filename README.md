@@ -28,27 +28,26 @@ The following code shows caching of IUserService where methods for caching are d
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.AddMemoryCache();
-services.ConfigureAspectProxy<IUserService, UserService>().
-    EnableMethodsCache(60000, EnumCacheProvider.Memory,true).BuildCacheAspect("UserServiceKeyPrefix").AddScoped();
+svc.ConfigureAspectProxy<IUserService, UserService>().RegisterAspect<CacheAspect<UserService>>().AddScoped();
 services.BuildServiceProvider();
 ~~~
 
 Note that the timeout is generally set to 60000 ms and MemoryCache is defined as default provider. However both values can be 
-overridden by attributes definition.The following code shows caching registration of GetUser method through service collection 
-configuration. Furthermore SaveUser methods is defined to remove the cache for GetUser method.
+overridden by attributes definition.The following code shows custom caching registration methods through service collection 
+configuration.
 
 ~~~cs
 IServiceCollection services = new ServiceCollection();
-services.AddMemoryCache();
-services.ConfigureAspectProxy<IUserService, UserService>().
-    EnableMethodsCache(60000, EnumCacheProvider.Memory, false).
-    RegisterCacheableMethod(m => m.GetUser(0), "user-{id}").
-    RegisterCacheRemoveMethod(m => m.SaveUser(new User { Id = 2, Name = "NameUser" }), "user-{_ret.Id}").
-    BuildCacheAspect().AddScoped();
+services.AddScopedCacheable<IUserService, UserService>((set) => set.
+	SetFor(m => m.GetUser(0), "user-{id}").
+	RemoveFor(m => m.Save(new User()), "user-{user.Id}").
+	RemoveFor(m => m.UpdateRandomUser(), "user-{_ret.Id}").
+	CacheDefaultProvider(EnumCacheProvider.Memory).
+	CacheDefaultTimeout(CacheTimeout.Minute).
+	ImportAttributesConfiguration()
+);
 ~~~
 
-Not the key template syntax. For values in curly brackets real values from method parameters are use. 
+Not the key template syntax. For values in curly brackets real values from method parameters are used. 
 To use the method return value, the prefix **_ret** might be used.
 Note that parameters names are case sensitive.
-
-

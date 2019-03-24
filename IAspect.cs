@@ -7,13 +7,21 @@ namespace NetCoreAopEssentials
     /// <summary>
     /// Aspect interface 
     /// </summary>
-    public interface IAspect
+    /// <typeparam name="TImplementation"></typeparam>
+    public interface IAspect<TImplementation> : IAspect
+        where TImplementation : class
     {
         /// <summary>
         /// Configure aspect for class 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        void ConfigureFor<T>() where T : class;
+        void Configure();
+    }
+
+    /// <summary>
+    /// Aspect interface 
+    /// </summary>
+    public interface IAspect
+    {
 
         /// <summary>
         /// Before execution

@@ -1,6 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Reflection;
+using System.Linq.Expressions;
 
 namespace NetCoreAopEssentials
 {
@@ -124,6 +129,56 @@ namespace NetCoreAopEssentials
                 return text;
             }
             return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+
+        /// <summary>
+        /// Gets fields fro declared template 
+        /// </summary>
+        /// <param name="keyTpl"></param>
+        /// <returns></returns>
+        public static List<string> GetFieldsFromTemplate(string keyTpl)
+        {
+            Regex regex = new Regex(@"(?<=\{)[^}]*(?=\})", RegexOptions.IgnoreCase);
+            MatchCollection matches = regex.Matches(keyTpl);
+            return matches.Cast<Match>().Select(m => m.Value).Distinct().ToList();
+        }
+
+        /// <summary>
+        /// Gets method info
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="methodExpr"></param>
+        /// <returns></returns>
+        public static MethodInfo GetMethodInfo<TImplementation, TProperty>(Expression<Func<TImplementation, TProperty>> methodExpr)
+        {
+            MethodCallExpression method = methodExpr.Body as MethodCallExpression;
+            if (method == null)
+            {
+                throw new ArgumentException($"Expression {methodExpr.ToString()} is not valid");
+            }
+
+            // get method info and return
+            var methodInfo = method.Method;
+            return methodInfo;
+        }
+
+        /// <summary>
+        /// Get method info
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="methodExpr"></param>
+        /// <returns></returns>
+        public static MethodInfo GetMethodInfo<TImplementation>(Expression<Action<TImplementation>> methodExpr)
+        {
+            MethodCallExpression method = methodExpr.Body as MethodCallExpression;
+            if (method == null)
+            {
+                throw new ArgumentException($"Expression {methodExpr.ToString()} is not valid");
+            }
+
+            // get method info and return
+            var methodInfo = method.Method;
+            return methodInfo;
         }
 
     }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using NetCoreAopEssentials.Cache.Models;
+using System;
 using System.Reflection;
 
-namespace NetCoreAopEssentials.Cache
+namespace NetCoreAopEssentials.Cache.Setup
 {
 
     /// <summary>
@@ -44,6 +45,11 @@ namespace NetCoreAopEssentials.Cache
         /// Cache timeout in milliseconds 
         /// </summary>
         public long TimeoutMs { get; set; }
+
+        /// <summary>
+        /// Key prefix
+        /// </summary>
+        public string KeyPrefix { get; set; }
 
         /// <summary>
         /// Added to timeout 

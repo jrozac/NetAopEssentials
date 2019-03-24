@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using NetCoreAopEssentials.Cache.Models;
+using NetCoreAopEssentials.Cache.Setup;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace NetCoreAopEssentials.Cache
@@ -11,7 +14,8 @@ namespace NetCoreAopEssentials.Cache
     /// <summary>
     /// Cache aspect
     /// </summary>
-    public class CacheAspect : IAspect
+    public class CacheAspect<TImplementation> : IAspect<TImplementation>
+        where TImplementation : class
     {
 
         /// <summary>
@@ -20,20 +24,48 @@ namespace NetCoreAopEssentials.Cache
         private Dictionary<string, MethodCacheConfiguration> _cacheDefinitions;
 
         /// <summary>
-        /// Key prefix
-        /// </summary>
-        internal string KeyPrefix { get; private set; }
-
-        /// <summary>
         /// Constructor which injects definitions
         /// </summary>
         /// <param name="cacheDefinitions"></param>
-        internal CacheAspect(Dictionary<string, MethodCacheConfiguration> cacheDefinitions, string keyPrefix)
+        internal CacheAspect(List<MethodCacheConfiguration> cacheDefinitions)
         {
-            _cacheDefinitions = cacheDefinitions;
-            KeyPrefix = keyPrefix;
+            ImportDefinitions(cacheDefinitions);
         }
 
+        /// <summary>
+        /// Constructor default
+        /// </summary>
+        public CacheAspect()
+        {
+            var defaults = new CacheSetupDefaults();
+            var cacheDefinitions = CacheSetupUtil.GetAttributesProfiles<TImplementation>().Select(profile =>
+                CacheSetupUtil.CreateCacheConfiguration(profile, defaults)).ToList();
+            ImportDefinitions(cacheDefinitions);
+        }
+
+        /// <summary>
+        /// Get key 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string GetFullKey(string key)
+        {
+            var prefix = _cacheDefinitions.Count() > 0 ? _cacheDefinitions.First().Value.KeyPrefix : null;
+            return prefix != null ? prefix + key : null;
+        }
+
+        /// <summary>
+        /// Import definitions
+        /// </summary>
+        /// <param name="cacheDefinitions"></param>
+        private void ImportDefinitions(List<MethodCacheConfiguration> cacheDefinitions)
+        {
+            // set definitions
+            _cacheDefinitions = cacheDefinitions.ToDictionary(
+                cfg => string.Format("{0}.{1}", cfg.MethodInfo.ReflectedType.FullName, cfg.MethodInfo.ToString()),
+                cfg => cfg);
+        }
+       
         /// <summary>
         /// After execution
         /// </summary>
@@ -103,8 +135,7 @@ namespace NetCoreAopEssentials.Cache
         /// <summary>
         /// Configure cache 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public void ConfigureFor<T>() where T : class
+        public void Configure()
         {
 
         }
@@ -137,7 +168,7 @@ namespace NetCoreAopEssentials.Cache
             }
 
             // do not set if condition not valid
-            bool quit = GeneralUtil.TryRun<CacheAspect, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval), 
+            bool quit = GeneralUtil.TryRun<CacheAspect<TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval), 
                 false, "Failed to exectue cache result func. Error message: {message}.");
             if(quit)
             {
@@ -148,12 +179,12 @@ namespace NetCoreAopEssentials.Cache
             long timeoutOffset = 0;
             if(cfg.TimeoutMsOffsetFunc != null)
             {
-                timeoutOffset = GeneralUtil.TryRun<CacheAspect, long>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
+                timeoutOffset = GeneralUtil.TryRun<CacheAspect<TImplementation>, long>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
             }
             var timeout = cfg.TimeoutMs + timeoutOffset;
             if(timeout <= 0)
             {
-                GeneralUtil.LogError<CacheAspect>(provider, "Timeout is not valid for method {method}.", cfg.MethodInfo.Name);
+                GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Timeout is not valid for method {method}.", cfg.MethodInfo.Name);
                 return;
             }
 
@@ -167,7 +198,7 @@ namespace NetCoreAopEssentials.Cache
                         memCache.Set(key, retval, TimeSpan.FromMilliseconds(timeout));
                     } else
                     {
-                        GeneralUtil.LogError<CacheAspect>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
+                        GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
                     }
                     break;
                 case EnumCacheProvider.Distributed:
@@ -181,7 +212,7 @@ namespace NetCoreAopEssentials.Cache
                         });
                     } else
                     {
-                        GeneralUtil.LogError<CacheAspect>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
+                        GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
                     }
                     break;
             }
@@ -205,7 +236,7 @@ namespace NetCoreAopEssentials.Cache
             }
 
             // do not remove if condition not valid
-            bool quit = GeneralUtil.TryRun<CacheAspect, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval),
+            bool quit = GeneralUtil.TryRun<CacheAspect<TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval),
                 false, "Failed to exectue cache result func. Error message: {message}.");
             if (quit)
             {
@@ -269,7 +300,7 @@ namespace NetCoreAopEssentials.Cache
             cached = cached.GetType() == methodInfo.ReturnType ? cached : null;
             if(cached == null)
             {
-                GeneralUtil.LogError<CacheAspect>(provider, "Cached type is not valid for method {method}.", methodInfo.Name);
+                GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Cached type is not valid for method {method}.", methodInfo.Name);
             }
 
             // return
@@ -288,13 +319,15 @@ namespace NetCoreAopEssentials.Cache
         private string GetKey(IServiceProvider provider, MethodCacheConfiguration cfg, object[] args, object retval)
         {
             // get key 
-            string keyItem = GeneralUtil.TryRun<CacheAspect, string>(provider, () => cfg.KeyFunc(args, retval), 
+            string keyItem = GeneralUtil.TryRun<CacheAspect<TImplementation>, string>(provider, () => cfg.KeyFunc(args, retval), 
                 null, "Failed to get cache key with error: {message}.");
             if(string.IsNullOrWhiteSpace(keyItem))
             {
                 return null;
             }
-            var key = KeyPrefix + keyItem;
+
+            // set key 
+            string key = cfg.KeyPrefix + keyItem;
                 
             // return key                
             return key;

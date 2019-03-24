@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetCoreAopEssentials.Cache
+namespace NetCoreAopEssentials.Cache.Models
 {
 
     /// <summary>

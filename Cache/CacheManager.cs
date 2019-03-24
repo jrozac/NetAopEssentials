@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using NetCoreAopEssentials.Cache.Models;
 using System;
 
 namespace NetCoreAopEssentials.Cache
@@ -15,9 +16,9 @@ namespace NetCoreAopEssentials.Cache
     {
 
         /// <summary>
-        /// get key prefix
+        /// Aspect
         /// </summary>
-        private readonly string _keyPrefix;
+        private readonly CacheAspect<TImplementation> _cacheAspect;
 
         /// <summary>
         /// Memory cache 
@@ -36,12 +37,11 @@ namespace NetCoreAopEssentials.Cache
         internal CacheManager(IServiceProvider provider)
         {
             // get aspect
-            var aspect = AspectProxy.GetRegisteredAspect<TImplementation, CacheAspect>();
-            if(aspect == null)
+            _cacheAspect = provider.GetRequiredService<AspectsContainer>().GetRegisteredAspect<TImplementation, CacheAspect<TImplementation>>();
+            if(_cacheAspect == null)
             {
                 throw new ArgumentException($"Aspect is not configured for {typeof(TImplementation)}.");
             }
-            _keyPrefix = aspect.KeyPrefix;
 
             // get cache 
             _memoryCache = provider.GetService<IMemoryCache>();
@@ -91,13 +91,20 @@ namespace NetCoreAopEssentials.Cache
         /// <returns></returns>
         public object GetCache(string key, EnumCacheProvider provider)
         {
+            // get full key 
+            var fkey = _cacheAspect.GetFullKey(key);
+            if(fkey == null)
+            {
+                return null;
+            }
+
             switch(provider)
             {
                 case EnumCacheProvider.Memory:
-                    var obj = _memoryCache?.Get(_keyPrefix + key);
+                    var obj = _memoryCache?.Get(fkey);
                     return obj;
                 case EnumCacheProvider.Distributed:
-                    var payload = _distributedCache?.Get(_keyPrefix + key);
+                    var payload = _distributedCache?.Get(fkey);
                     return CacheSerializationUtil.Deserialize(null, payload);
             }
             return null;
@@ -120,13 +127,21 @@ namespace NetCoreAopEssentials.Cache
         /// <param name="provider"></param>
         public void RemoveCache(string key, EnumCacheProvider provider)
         {
-            switch(provider)
+
+            // get full key 
+            var fkey = _cacheAspect.GetFullKey(key);
+            if (fkey == null)
+            {
+                return;
+            }
+
+            switch (provider)
             {
                 case EnumCacheProvider.Memory:
-                    _memoryCache?.Remove(_keyPrefix + key);
+                    _memoryCache?.Remove(fkey);
                     break;
                 case EnumCacheProvider.Distributed:
-                    _distributedCache?.Remove(_keyPrefix + key);
+                    _distributedCache?.Remove(fkey);
                     break;
             }
         }
