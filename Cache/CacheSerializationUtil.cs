@@ -104,7 +104,6 @@ namespace NetCoreAopEssentials.Cache
             {
                 var obj = Activator.CreateInstance(type);
                 return Serialize(null, obj) != null;
-
             } catch(Exception)
             {
                 return false;

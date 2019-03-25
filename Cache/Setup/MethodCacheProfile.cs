@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetCoreAopEssentials.Cache.Models;
+using System;
 using System.Reflection;
 
 namespace NetCoreAopEssentials.Cache.Setup
