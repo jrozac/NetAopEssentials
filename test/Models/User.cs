@@ -21,5 +21,10 @@
         /// </summary>
         public string RandomToken { get; set; }
 
+        /// <summary>
+        /// Timeout
+        /// </summary>
+        public long TimeouMs { get; set; }
+
     }
 }

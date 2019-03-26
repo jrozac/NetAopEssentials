@@ -65,7 +65,7 @@ namespace NetCoreAopEssentials
         /// <returns></returns>
         public IServiceCollection AddTransient()
         {
-            _services.AddSingleton<AspectsContainer>(_aspectsContainer);
+            _services.AddSingleton(_aspectsContainer);
             _services.AddTransient<TImplementation, TImplementation>();
             _services.AddTransient((provider) => AspectProxy.Create<TService,TImplementation>(provider));
             return _services;
@@ -77,7 +77,7 @@ namespace NetCoreAopEssentials
         /// <returns></returns>
         public IServiceCollection AddSingleton()
         {
-            _services.AddSingleton<AspectsContainer>(_aspectsContainer);
+            _services.AddSingleton(_aspectsContainer);
             _services.AddSingleton<TImplementation, TImplementation>();
             _services.AddSingleton((provider) => AspectProxy.Create<TService,TImplementation>(provider));
             return _services;

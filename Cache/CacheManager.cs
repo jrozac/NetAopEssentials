@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using NetCoreAopEssentials.Cache.Models;
+using NetCoreAopEssentials.Cache.Setup;
 using System;
+using System.Collections.Generic;
 
 namespace NetCoreAopEssentials.Cache
 {
@@ -144,6 +146,15 @@ namespace NetCoreAopEssentials.Cache
                     _distributedCache?.Remove(fkey);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Get cache setups
+        /// </summary>
+        /// <returns></returns>
+        public List<MethodCacheSetup> GetConfigurations()
+        {
+            return _cacheAspect.GetCacheSetup();
         }
 
     }

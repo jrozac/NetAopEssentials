@@ -5,6 +5,11 @@ using System.Linq.Expressions;
 
 namespace NetCoreAopEssentials.Cache.Setup
 {
+
+    /// <summary>
+    /// Cache setup
+    /// </summary>
+    /// <typeparam name="TImplementation"></typeparam>
     public class CacheSetup<TImplementation>
         where TImplementation : class
     {
@@ -87,13 +92,12 @@ namespace NetCoreAopEssentials.Cache.Setup
         ///         Key: User-{id}
         /// </param>
         /// <param name="timeout">Timeout</param>
-        /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
         /// <param name="timeoutFunc">Function to determinate additional timeout time. Incoming parameters are function results.</param>
         /// <returns></returns>
         public CacheSetup<TImplementation> SetFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr,
-            string keyTpl, long timeout = 0, string groupId = null, EnumCacheProvider? provider = null,
+            string keyTpl, long timeout = 0, EnumCacheProvider? provider = null,
             Func<TRet, bool> cacheResultFunc = null, Func<TRet, long> timeoutFunc = null)
         {
 
@@ -103,7 +107,6 @@ namespace NetCoreAopEssentials.Cache.Setup
                 MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
                 KeyTpl = keyTpl,
                 Timeout = timeout,
-                GroupId = groupId,
                 Provider = provider,
                 Action = EnumCacheAction.Set
             };
@@ -132,12 +135,11 @@ namespace NetCoreAopEssentials.Cache.Setup
         ///         Method: bool SaveUser(int id)
         ///         Key: User-{id}
         /// </param>
-        /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
         /// <returns></returns>
         public CacheSetup<TImplementation> RemoveFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr,
-            string keyTpl, string groupId = null, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null)
+            string keyTpl, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null)
         {
 
             // set configuration
@@ -145,7 +147,6 @@ namespace NetCoreAopEssentials.Cache.Setup
             {
                 MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
                 KeyTpl = keyTpl,
-                GroupId = groupId,
                 Provider = provider,
                 Action = EnumCacheAction.Remove
             };
@@ -170,12 +171,11 @@ namespace NetCoreAopEssentials.Cache.Setup
         ///         Method: bool SaveUser(int id)
         ///         Key: User-{id}
         /// </param>
-        /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
         /// <returns></returns>
         public CacheSetup<TImplementation> RemoveFor(Expression<Action<TImplementation>> methodExpr,
-            string keyTpl, string groupId = null, EnumCacheProvider? provider = null)
+            string keyTpl, EnumCacheProvider? provider = null)
         {
 
             // set configuration
@@ -183,7 +183,6 @@ namespace NetCoreAopEssentials.Cache.Setup
             {
                 MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
                 KeyTpl = keyTpl,
-                GroupId = groupId,
                 Provider = provider,
                 Action = EnumCacheAction.Remove
             };

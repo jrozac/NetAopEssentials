@@ -14,17 +14,11 @@ namespace NetCoreAopEssentials.Cache.Setup
     {
 
         /// <summary>
-        /// Creates cache configuration
+        /// Create cache configuration
         /// </summary>
-        /// <typeparam name="TRet"></typeparam>
-        /// <param name="methodInfo"></param>
-        /// <param name="action"></param>
-        /// <param name="keyTpl"></param>
-        /// <param name="timeout"></param>
-        /// <param name="groupId"></param>
-        /// <param name="provider"></param>
-        /// <param name="cacheResultFunc"></param>
-        /// <param name="timeoutFunc"></param>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="profile"></param>
+        /// <param name="defaults"></param>
         /// <returns></returns>
         internal static MethodCacheConfiguration CreateCacheConfiguration<TImplementation>(MethodCacheProfile<TImplementation> profile, 
             CacheSetupDefaults defaults)
@@ -41,7 +35,6 @@ namespace NetCoreAopEssentials.Cache.Setup
             var cfg = new MethodCacheConfiguration
             {
                 MethodInfo = profile.MethodInfo,
-                GroupId = profile.GroupId,
                 KeyTpl = profile.KeyTpl,
                 Action = profile.Action,
                 CacheResultFunc = profile.CacheResultFunc,
@@ -75,7 +68,6 @@ namespace NetCoreAopEssentials.Cache.Setup
                 var profile = new MethodCacheProfile<TImplementation>
                 {
                     Action = EnumCacheAction.Set,
-                    GroupId = def.GroupId,
                     KeyTpl = def.KeyTemplate,
                     MethodInfo = m,
                     Provider = def.Provider,
@@ -91,7 +83,6 @@ namespace NetCoreAopEssentials.Cache.Setup
                 var profile = new MethodCacheProfile<TImplementation>
                 {
                     Action = EnumCacheAction.Remove,
-                    GroupId = def.GroupId,
                     KeyTpl = def.KeyTemplate,
                     MethodInfo = m,
                     Provider = def.Provider

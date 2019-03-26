@@ -1,4 +1,5 @@
 ﻿using System;
+using NetCoreAopEssentials.Cache;
 using NetCoreAopEssentialsTest.Models;
 
 namespace NetCoreAopEssentialsTest.Services
@@ -67,7 +68,8 @@ namespace NetCoreAopEssentialsTest.Services
                 return new User {
                     Id = id,
                     Name = $"User{id}",
-                    RandomToken = Guid.NewGuid().ToString()
+                    RandomToken = Guid.NewGuid().ToString(),
+                    TimeouMs = id * CacheTimeout.Second
                 };
             }
             return null;

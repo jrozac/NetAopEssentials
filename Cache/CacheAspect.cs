@@ -333,5 +333,23 @@ namespace NetCoreAopEssentials.Cache
             return key;
         }
 
+        /// <summary>
+        /// Get cache setup
+        /// </summary>
+        /// <returns></returns>
+        internal List<MethodCacheSetup> GetCacheSetup() {
+            return _cacheDefinitions.Select(p => new MethodCacheSetup
+            {
+                Action = p.Value.Action,
+                CacheResultFunc  = p.Value.CacheResultFunc != null,
+                KeyPrefix = p.Value.KeyPrefix,
+                KeyTpl = p.Value.KeyTpl,
+                Method = p.Key,
+                Provider = p.Value.Provider,
+                TimeoutMs = p.Value.TimeoutMs,
+                TimeoutMsOffsetFunc = p.Value.TimeoutMsOffsetFunc != null
+            }).ToList();
+        }
+
     }
 }

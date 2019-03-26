@@ -14,14 +14,12 @@ namespace NetCoreAopEssentials.Cache.Models
         /// Constructor
         /// </summary>
         /// <param name="keyTemplate"></param>
-        /// <param name="groupId"></param>
         /// <param name="provider"></param>
         /// <param name="useCustomProvider"></param>
-        public CacheRemoveAttribute(string keyTemplate, string groupId = null,
-            EnumCacheProvider provider = EnumCacheProvider.Memory, bool useCustomProvider = false)
+        public CacheRemoveAttribute(string keyTemplate, EnumCacheProvider provider = EnumCacheProvider.Memory, 
+            bool useCustomProvider = false)
         {
             KeyTemplate = keyTemplate;
-            GroupId = groupId;
             Provider = useCustomProvider ? new EnumCacheProvider?(provider) : null;
         }
 
@@ -34,11 +32,6 @@ namespace NetCoreAopEssentials.Cache.Models
         /// Key template 
         /// </summary>
         public string KeyTemplate { get; private set; }
-
-        /// <summary>
-        /// Group id 
-        /// </summary>
-        public string GroupId { get; private set; }
 
     }
 }

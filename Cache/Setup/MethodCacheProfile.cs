@@ -29,11 +29,6 @@ namespace NetCoreAopEssentials.Cache.Setup
         public long Timeout { get; set; }
 
         /// <summary>
-        /// Group id
-        /// </summary>
-        public string GroupId { get; set; }
-
-        /// <summary>
         /// Cache provider
         /// </summary>
         public EnumCacheProvider? Provider { get; set; }
