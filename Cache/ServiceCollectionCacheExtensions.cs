@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NetCoreAopEssentials.Cache.Models;
-using NetCoreAopEssentials.Cache.Setup;
+using NetAopEssentials.Cache.Models;
+using NetAopEssentials.Cache.Setup;
 using System;
 
-namespace NetCoreAopEssentials.Cache
+namespace NetAopEssentials.Cache
 {
 
     /// <summary>

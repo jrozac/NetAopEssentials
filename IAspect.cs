@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace NetCoreAopEssentials
+namespace NetAopEssentials
 {
 
     /// <summary>

@@ -1,9 +1,9 @@
-﻿using NetCoreAopEssentialsTest.Models;
+﻿using NetAopEssentialsTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetCoreAopEssentialsTest.Services
+namespace NetAopEssentialsTest.Services
 {
 
     /// <summary>

@@ -1,9 +1,9 @@
-﻿using NetCoreAopEssentials.Cache.Models;
+﻿using NetAopEssentials.Cache.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace NetCoreAopEssentials.Cache.Setup
+namespace NetAopEssentials.Cache.Setup
 {
 
     /// <summary>

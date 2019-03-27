@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace NetCoreAopEssentials.Cache.Setup
+namespace NetAopEssentials.Cache.Setup
 {
 
     /// <summary>

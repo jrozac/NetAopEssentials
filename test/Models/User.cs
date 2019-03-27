@@ -1,4 +1,4 @@
-﻿namespace NetCoreAopEssentialsTest.Models
+﻿namespace NetAopEssentialsTest.Models
 {
 
     /// <summary>

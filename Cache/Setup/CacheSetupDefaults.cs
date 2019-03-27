@@ -1,6 +1,6 @@
-﻿using NetCoreAopEssentials.Cache.Models;
+﻿using NetAopEssentials.Cache.Models;
 
-namespace NetCoreAopEssentials.Cache.Setup
+namespace NetAopEssentials.Cache.Setup
 {
     /// <summary>
     /// Cache setup defaults

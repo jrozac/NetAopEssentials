@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace NetCoreAopEssentials
+namespace NetAopEssentials
 {
 
     /// <summary>

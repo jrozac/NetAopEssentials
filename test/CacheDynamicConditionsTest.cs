@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetCoreAopEssentialsTest.Services;
-using NetCoreAopEssentials.Cache;
-using NetCoreAopEssentials.Cache.Models;
+using NetAopEssentialsTest.Services;
+using NetAopEssentials.Cache;
+using NetAopEssentials.Cache.Models;
 using System.Threading.Tasks;
 
-namespace NetCoreAopEssentialsTest
+namespace NetAopEssentialsTest
 {
 
     /// <summary>

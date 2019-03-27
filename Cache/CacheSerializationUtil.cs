@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace NetCoreAopEssentials.Cache
+namespace NetAopEssentials.Cache
 {
     /// <summary>
     /// Serialization util

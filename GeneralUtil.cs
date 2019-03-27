@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Linq.Expressions;
 
-namespace NetCoreAopEssentials
+namespace NetAopEssentials
 {
 
     /// <summary>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NetCoreAopEssentials.Cache.Models;
-using NetCoreAopEssentialsTest.Models;
+using NetAopEssentials.Cache.Models;
+using NetAopEssentialsTest.Models;
 
-namespace NetCoreAopEssentialsTest.Services
+namespace NetAopEssentialsTest.Services
 {
 
     /// <summary>

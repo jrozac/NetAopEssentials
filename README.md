@@ -1,5 +1,5 @@
-# NetCoreAopEssentials
-Net core AOP support. Support for generic AOP and caching of custom methods.
+# NetAopEssentials
+Net AOP support. Support for generic AOP and caching of custom methods.
 
 ## Overview
 Services can be registered through aspect proxy (or multiple aspect proxies). 

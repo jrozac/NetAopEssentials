@@ -1,8 +1,8 @@
 ﻿using System;
-using NetCoreAopEssentials.Cache;
-using NetCoreAopEssentialsTest.Models;
+using NetAopEssentials.Cache;
+using NetAopEssentialsTest.Models;
 
-namespace NetCoreAopEssentialsTest.Services
+namespace NetAopEssentialsTest.Services
 {
 
     /// <summary>

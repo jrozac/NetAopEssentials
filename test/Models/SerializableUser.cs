@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NetCoreAopEssentialsTest.Models
+namespace NetAopEssentialsTest.Models
 {
 
     /// <summary>

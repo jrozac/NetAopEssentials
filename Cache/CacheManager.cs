@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using NetCoreAopEssentials.Cache.Models;
-using NetCoreAopEssentials.Cache.Setup;
+using NetAopEssentials.Cache.Models;
+using NetAopEssentials.Cache.Setup;
 using System;
 using System.Collections.Generic;
 
-namespace NetCoreAopEssentials.Cache
+namespace NetAopEssentials.Cache
 {
 
     /// <summary>

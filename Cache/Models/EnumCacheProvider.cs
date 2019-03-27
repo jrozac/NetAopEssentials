@@ -1,4 +1,4 @@
-﻿namespace NetCoreAopEssentials.Cache.Models
+﻿namespace NetAopEssentials.Cache.Models
 {
     /// <summary>
     /// Cache type 
