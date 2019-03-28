@@ -25,7 +25,7 @@ namespace NetAopEssentialsTest
             UserService.MethodRunCountReset();
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserService>(s => s.
+            collection.AddScopedCached<IUserService, UserService>(s => s.
                 SetFor(m => m.GetUser(0), "user-{id}", 0, null, (user) => user.Name == "User1")
             );
             var provider = collection.BuildServiceProvider();
@@ -55,7 +55,7 @@ namespace NetAopEssentialsTest
             UserService.MethodRunCountReset();
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserService>(s => s.
+            collection.AddScopedCached<IUserService, UserService>(s => s.
                 SetFor(m => m.GetUser(0), "user-{id}", 0, null, null, (user) => user.TimeouMs).
                 CacheDefaultTimeout(1)
             );

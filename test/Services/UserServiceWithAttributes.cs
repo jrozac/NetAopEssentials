@@ -48,7 +48,7 @@ namespace NetAopEssentialsTest.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Cacheable("user-{id}")]
+        [CacheSet("user-{id}")]
         public User GetUser(int id)
         {
             return _service.GetUser(id);

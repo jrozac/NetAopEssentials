@@ -24,7 +24,7 @@ namespace NetAopEssentialsTest
             {
                 IServiceCollection collection = new ServiceCollection();
                 collection.AddDistributedMemoryCache();
-                collection.AddScopedCacheable<IUserService, UserServiceWithBadAttributes>(s => {
+                collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>(s => {
                     s.SetFor(m => m.GetUser(0), "user-{id}").
                         CacheDefaultProvider(EnumCacheProvider.Distributed);
                 });
@@ -46,7 +46,7 @@ namespace NetAopEssentialsTest
             // setup 
             IServiceCollection collection = new ServiceCollection();
             collection.AddDistributedMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserService>(s => {
+            collection.AddScopedCached<IUserService, UserService>(s => {
                 s.SetFor(m => m.GetSerializableUser(0), "userser-{id}").
                     CacheDefaultProvider(EnumCacheProvider.Distributed);
             });

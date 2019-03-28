@@ -18,7 +18,7 @@ namespace NetAopEssentials.Cache
         /// <param name="collection"></param>
         /// <param name="setupAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddScopedCacheable<TService,TImplementation>(this IServiceCollection collection, 
+        public static IServiceCollection AddScopedCached<TService,TImplementation>(this IServiceCollection collection, 
             Action<CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
@@ -35,7 +35,7 @@ namespace NetAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddScopedCacheable<TService, TImplementation>(this IServiceCollection collection,
+        public static IServiceCollection AddScopedCached<TService, TImplementation>(this IServiceCollection collection,
             int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
@@ -51,7 +51,7 @@ namespace NetAopEssentials.Cache
         /// <param name="collection"></param>
         /// <param name="setupAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTransientCacheable<TService, TImplementation>(this IServiceCollection collection,
+        public static IServiceCollection AddTransientCached<TService, TImplementation>(this IServiceCollection collection,
             Action<CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
@@ -68,7 +68,7 @@ namespace NetAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddTransientCacheable<TService, TImplementation>(this IServiceCollection collection,
+        public static IServiceCollection AddTransientCached<TService, TImplementation>(this IServiceCollection collection,
             int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService
@@ -84,7 +84,7 @@ namespace NetAopEssentials.Cache
         /// <param name="collection"></param>
         /// <param name="setupAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonCacheable<TService, TImplementation>(this IServiceCollection collection,
+        public static IServiceCollection AddSingletonCached<TService, TImplementation>(this IServiceCollection collection,
             Action<CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
@@ -101,7 +101,7 @@ namespace NetAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IServiceCollection AddSingletonCacheable<TService, TImplementation>(this IServiceCollection collection,
+        public static IServiceCollection AddSingletonCached<TService, TImplementation>(this IServiceCollection collection,
             int timeout, EnumCacheProvider provider = EnumCacheProvider.Memory)
             where TService : class
             where TImplementation : class, TService

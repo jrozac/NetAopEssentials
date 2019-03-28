@@ -23,7 +23,7 @@ namespace NetAopEssentialsTest
             UserService.MethodRunCountReset();
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserServiceWithBadAttributes>(s => {
+            collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>(s => {
                 s.SetFor(m => m.GetUser(0), "user-{id}");
             });
             var provider = collection.BuildServiceProvider();

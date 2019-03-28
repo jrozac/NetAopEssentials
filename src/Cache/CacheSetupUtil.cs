@@ -54,7 +54,7 @@ namespace NetAopEssentials.Cache
         {
             // get methods to set cache
             var mehtodsToSet = typeof(TImplementation).GetMethods().Where(m =>
-                m.GetCustomAttributes().FirstOrDefault(a => a.GetType() == typeof(CacheableAttribute)) != null);
+                m.GetCustomAttributes().FirstOrDefault(a => a.GetType() == typeof(CacheSetAttribute)) != null);
 
             // get methods to remove cache
             var mehtodsToRemove = typeof(TImplementation).GetMethods().Where(m =>
@@ -63,7 +63,7 @@ namespace NetAopEssentials.Cache
             // configure set cache profiles
             var setProfiles = mehtodsToSet.Select(m =>
             {
-                var def = (CacheableAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheableAttribute));
+                var def = (CacheSetAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheSetAttribute));
                 var profile = new MethodCacheProfile<TImplementation>
                 {
                     Action = EnumCacheAction.Set,

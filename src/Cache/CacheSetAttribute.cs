@@ -4,10 +4,10 @@ namespace NetAopEssentials.Cache
 {
 
     /// <summary>
-    /// Cacheable attribute 
+    /// Cache set attribute 
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class CacheableAttribute : Attribute
+    public class CacheSetAttribute : Attribute
     {
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace NetAopEssentials.Cache
         /// <param name="timeoutMs"></param>
         /// <param name="provider"></param>
         /// <param name="useCustomProvider"></param>
-        public CacheableAttribute(string keyTemplate, long timeoutMs = 0, 
+        public CacheSetAttribute(string keyTemplate, long timeoutMs = 0, 
             EnumCacheProvider provider = EnumCacheProvider.Memory, bool useCustomProvider = false)
         {
             KeyTemplate = keyTemplate;

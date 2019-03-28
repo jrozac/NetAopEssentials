@@ -59,7 +59,7 @@ namespace NetAopEssentialsTest
             UserService.MethodRunCountReset();
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserService>(s => {
+            collection.AddScopedCached<IUserService, UserService>(s => {
                 s.SetFor(m => m.GetUser(0), "user-{id}");
             });
             var provider = collection.BuildServiceProvider();

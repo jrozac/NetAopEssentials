@@ -20,7 +20,7 @@ services.BuildServiceProvider();
 
 ## Caching aspect
 Caching is an aspect implementation to support custom methods caching. Memory cache and distributed cache are supported. 
-Therefore, at least one is required in service collection. Methods caching can be defined by using **CacheableAttribute** 
+Therefore, at least one is required in service collection. Methods caching can be defined by using **CacheSetAttribute** 
 and **CacheRemoveAttribute** attributes on selected methods. Another option to define methods caching is through service 
 collection configuration. Both ways require caching aspect registration. 
 The following code shows caching of IUserService where methods for caching are defined with attributes only.
@@ -38,7 +38,7 @@ configuration.
 
 ~~~cs
 IServiceCollection services = new ServiceCollection();
-services.AddScopedCacheable<IUserService, UserService>((set) => set.
+services.AddScopedCached<IUserService, UserService>((set) => set.
 	SetFor(m => m.GetUser(0), "user-{id}").
 	RemoveFor(m => m.Save(new User()), "user-{user.Id}").
 	RemoveFor(m => m.UpdateRandomUser(), "user-{_ret.Id}").

@@ -22,7 +22,7 @@ namespace NetAopEssentialsTest
             {
                 IServiceCollection collection = new ServiceCollection();
                 collection.AddMemoryCache();
-                collection.AddScopedCacheable<IUserService, UserServiceWithBadAttributes>();
+                collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>();
                 Assert.Fail();
             } catch(Exception)
             {
@@ -39,7 +39,7 @@ namespace NetAopEssentialsTest
             // register 
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            collection.AddScopedCacheable<IUserService, UserServiceWithAttributes>();
+            collection.AddScopedCached<IUserService, UserServiceWithAttributes>();
             var provider = collection.BuildServiceProvider();
             var svc = provider.GetRequiredService<IUserService>();
 
