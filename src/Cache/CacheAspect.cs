@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using NetAopEssentials.Cache.Models;
-using NetAopEssentials.Cache.Setup;
 using System;
 using System.Collections.Generic;
 using System.Linq;

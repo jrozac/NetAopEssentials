@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetAopEssentials", "NetAopEssentials.csproj", "{17715460-48C3-483B-A499-72C7EAB76711}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetAopEssentials", "src\NetAopEssentials.csproj", "{17715460-48C3-483B-A499-72C7EAB76711}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetAopEssentialsTest", "test\NetAopEssentialsTest.csproj", "{99B37EAC-4771-4D04-89AE-B4FF573CB774}"
 EndProject

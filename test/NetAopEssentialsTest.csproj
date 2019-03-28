@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetAopEssentials.csproj" />
+    <ProjectReference Include="..\src\NetAopEssentials.csproj" />
   </ItemGroup>
 
 </Project>

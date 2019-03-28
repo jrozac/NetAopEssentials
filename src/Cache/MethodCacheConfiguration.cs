@@ -1,8 +1,7 @@
-﻿using NetAopEssentials.Cache.Models;
-using System;
+﻿using System;
 using System.Reflection;
 
-namespace NetAopEssentials.Cache.Setup
+namespace NetAopEssentials.Cache
 {
 
     /// <summary>

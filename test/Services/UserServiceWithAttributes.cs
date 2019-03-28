@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetAopEssentials.Cache.Models;
+﻿using NetAopEssentials.Cache;
 using NetAopEssentialsTest.Models;
 
 namespace NetAopEssentialsTest.Services

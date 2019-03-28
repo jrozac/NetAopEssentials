@@ -1,6 +1,4 @@
-﻿using NetAopEssentials.Cache.Models;
-
-namespace NetAopEssentials.Cache.Setup
+﻿namespace NetAopEssentials.Cache
 {
     /// <summary>
     /// Cache setup defaults

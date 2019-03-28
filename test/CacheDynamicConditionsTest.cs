@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetAopEssentialsTest.Services;
 using NetAopEssentials.Cache;
-using NetAopEssentials.Cache.Models;
 using System.Threading.Tasks;
 
 namespace NetAopEssentialsTest

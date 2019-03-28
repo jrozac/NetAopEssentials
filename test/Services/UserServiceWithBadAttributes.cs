@@ -1,4 +1,4 @@
-﻿using NetAopEssentials.Cache.Models;
+﻿using NetAopEssentials.Cache;
 using NetAopEssentialsTest.Models;
 
 namespace NetAopEssentialsTest.Services

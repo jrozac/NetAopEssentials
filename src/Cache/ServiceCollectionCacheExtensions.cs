@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NetAopEssentials.Cache.Models;
-using NetAopEssentials.Cache.Setup;
 using System;
 
 namespace NetAopEssentials.Cache

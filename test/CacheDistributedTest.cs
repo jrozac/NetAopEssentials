@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetAopEssentials.Cache;
-using NetAopEssentials.Cache.Models;
 using NetAopEssentialsTest.Services;
 using System;
 
