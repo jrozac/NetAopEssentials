@@ -66,5 +66,29 @@ namespace NetAopEssentialsTest
 
         }
 
+        /// <summary>
+        /// Test that service registration does work with provided timeout
+        /// </summary>
+        [TestMethod]
+        public void TestRegisterWithTimeoutSet()
+        {
+
+            // build collection 
+            IServiceCollection collection = new ServiceCollection();
+            collection.AddMemoryCache();
+            collection.AddScopedCached<IUserService, UserServiceWithAttributes>(CacheTimeout.Century);
+            var provider = collection.BuildServiceProvider();
+
+            // get service 
+            UserService.MethodRunCountReset();
+            var service = provider.GetService<IUserService>();
+
+            // test cache
+            var user1 = service.GetUser(1);
+            var user2 = service.GetUser(1);
+            Assert.AreEqual(1, UserService.MethodRunCount);
+            Assert.AreEqual(user1.RandomToken, user2.RandomToken);
+
+        }
     }
 }
