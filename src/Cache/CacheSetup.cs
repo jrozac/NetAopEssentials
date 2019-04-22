@@ -14,9 +14,9 @@ namespace NetAopEssentials.Cache
     {
 
         /// <summary>
-        /// Methods cache configurations
+        /// Methods cache setups
         /// </summary>
-        internal List<MethodCacheProfile<TImplementation>> MethodsCacheProfiles { get; private set; }
+        internal List<MethodCacheSetup<TImplementation>> MethodsCacheSetups { get; private set; }
 
         /// <summary>
         /// Defaults
@@ -28,7 +28,7 @@ namespace NetAopEssentials.Cache
         /// </summary>
         internal CacheSetup()
         {
-            MethodsCacheProfiles = new List<MethodCacheProfile<TImplementation>>();
+            MethodsCacheSetups = new List<MethodCacheSetup<TImplementation>>();
             Defaults = new CacheSetupDefaults();
         }
 
@@ -36,7 +36,7 @@ namespace NetAopEssentials.Cache
         /// Import
         /// </summary>
         /// <returns></returns>
-        public CacheSetup<TImplementation> ImportAttributesConfiguration()
+        public CacheSetup<TImplementation> ImportAttributesSetup()
         {
             Defaults.ReadAttributes = true;
             return this;
@@ -71,10 +71,6 @@ namespace NetAopEssentials.Cache
         /// <returns></returns>
         public CacheSetup<TImplementation> CacheDefaultTimeout(long timeout)
         {
-            if (timeout <= 0)
-            {
-                throw new ArgumentException("Timeout has to be grater than zero.");
-            }
             Defaults.DefaultTimeout = timeout;
             return this;
         }
@@ -96,12 +92,12 @@ namespace NetAopEssentials.Cache
         /// <param name="timeoutFunc">Function to determinate additional timeout time. Incoming parameters are function results.</param>
         /// <returns></returns>
         public CacheSetup<TImplementation> SetFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr,
-            string keyTpl, long timeout = 0, EnumCacheProvider? provider = null,
+            string keyTpl, long? timeout = null, EnumCacheProvider? provider = null,
             Func<TRet, bool> cacheResultFunc = null, Func<TRet, long> timeoutFunc = null)
         {
 
-            // set configuration
-            var cfg = new MethodCacheProfile<TImplementation>
+            // set setup
+            var setup = new MethodCacheSetup<TImplementation>
             {
                 MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
                 KeyTpl = keyTpl,
@@ -111,15 +107,15 @@ namespace NetAopEssentials.Cache
             };
             if (cacheResultFunc != null)
             {
-                cfg.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
+                setup.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
             }
             if (timeoutFunc != null)
             {
-                cfg.TimeoutFunc = (r) => timeoutFunc((TRet)r);
+                setup.TimeoutFunc = (r) => timeoutFunc((TRet)r);
             }
 
             // save profile and return
-            MethodsCacheProfiles.Add(cfg);
+            MethodsCacheSetups.Add(setup);
             return this;
         }
 
@@ -141,8 +137,8 @@ namespace NetAopEssentials.Cache
             string keyTpl, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null)
         {
 
-            // set configuration
-            var cfg = new MethodCacheProfile<TImplementation>
+            // set setup
+            var setup = new MethodCacheSetup<TImplementation>
             {
                 MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
                 KeyTpl = keyTpl,
@@ -151,43 +147,11 @@ namespace NetAopEssentials.Cache
             };
             if (cacheResultFunc != null)
             {
-                cfg.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
+                setup.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
             }
 
             // save profile and return
-            MethodsCacheProfiles.Add(cfg);
-            return this;
-        }
-
-        /// <summary>
-        /// Defines method to delete cache if method is executed.
-        /// </summary>
-        /// <typeparam name="TRet"></typeparam>
-        /// <param name="methodExpr">Method definition</param>
-        /// <param name="keyTpl">
-        ///     Cache key template. Return value or retrun value properties or method properties can be used inside curly brackets.
-        ///     E.g.:
-        ///         Method: bool SaveUser(int id)
-        ///         Key: User-{id}
-        /// </param>
-        /// <param name="provider"></param>
-        /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
-        /// <returns></returns>
-        public CacheSetup<TImplementation> RemoveFor(Expression<Action<TImplementation>> methodExpr,
-            string keyTpl, EnumCacheProvider? provider = null)
-        {
-
-            // set configuration
-            var cfg = new MethodCacheProfile<TImplementation>
-            {
-                MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
-                KeyTpl = keyTpl,
-                Provider = provider,
-                Action = EnumCacheAction.Remove
-            };
-
-            // save profile and return
-            MethodsCacheProfiles.Add(cfg);
+            MethodsCacheSetups.Add(setup);
             return this;
         }
 

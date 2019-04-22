@@ -15,12 +15,20 @@ namespace NetAopEssentials.Cache
         /// </summary>
         /// <param name="keyTemplate"></param>
         /// <param name="provider"></param>
-        /// <param name="useCustomProvider"></param>
-        public CacheRemoveAttribute(string keyTemplate, EnumCacheProvider provider = EnumCacheProvider.Memory, 
-            bool useCustomProvider = false)
+        public CacheRemoveAttribute(string keyTemplate, EnumCacheProvider provider)
         {
             KeyTemplate = keyTemplate;
-            Provider = useCustomProvider ? new EnumCacheProvider?(provider) : null;
+            Provider = provider;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="keyTemplate"></param>
+        public CacheRemoveAttribute(string keyTemplate)
+        {
+            KeyTemplate = keyTemplate;
+            Provider = null;
         }
 
         /// <summary>

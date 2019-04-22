@@ -7,14 +7,14 @@ namespace NetAopEssentialsTest
 {
 
     /// <summary>
-    /// Test custom configuration
+    /// Test custom setup
     /// </summary>
     [TestClass]
-    public class CacheCustomConfigurationTest
+    public class CacheCustomSetupTest
     {
 
         /// <summary>
-        /// Test method return is cached for manual configuration.
+        /// Test method return is cached for manual setup.
         /// </summary>
         [TestMethod]
         public void TestMethodReturnIsCached()

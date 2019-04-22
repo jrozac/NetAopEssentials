@@ -98,6 +98,7 @@ namespace NetAopEssentials.Cache
                 return null;
             }
 
+            // get cache 
             switch(provider)
             {
                 case EnumCacheProvider.Memory:
@@ -135,6 +136,7 @@ namespace NetAopEssentials.Cache
                 return;
             }
 
+            // remove cache
             switch (provider)
             {
                 case EnumCacheProvider.Memory:
@@ -150,9 +152,9 @@ namespace NetAopEssentials.Cache
         /// Get cache setups
         /// </summary>
         /// <returns></returns>
-        public List<MethodCacheSetup> GetConfigurations()
+        public List<MethodCacheSetupInfo> GetCacheSetupInfos()
         {
-            return _cacheAspect.GetCacheSetup();
+            return _cacheAspect.GetCacheSetupInfos();
         }
 
     }

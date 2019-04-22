@@ -26,7 +26,7 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.AddScopedCached<IUserService, UserService>(s => s.
-                SetFor(m => m.GetUser(0), "user-{id}", 0, null, (user) => user.Name == "User1")
+                SetFor(m => m.GetUser(0), "user-{id}", null, null, (user) => user.Name == "User1")
             );
             var provider = collection.BuildServiceProvider();
             var svc = provider.GetService<IUserService>();
@@ -56,7 +56,7 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.AddScopedCached<IUserService, UserService>(s => s.
-                SetFor(m => m.GetUser(0), "user-{id}", 0, null, null, (user) => user.TimeouMs).
+                SetFor(m => m.GetUser(0), "user-{id}", null, null, null, (user) => user.TimeouMs).
                 CacheDefaultTimeout(1)
             );
             var provider = collection.BuildServiceProvider();

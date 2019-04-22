@@ -1,4 +1,5 @@
 ﻿using NetAopEssentials.Cache;
+using NetAopEssentials.Filter;
 using NetAopEssentialsTest.Models;
 
 namespace NetAopEssentialsTest.Services
@@ -49,6 +50,7 @@ namespace NetAopEssentialsTest.Services
         /// <param name="id"></param>
         /// <returns></returns>
         [CacheSet("user-{id}")]
+        [Filter("idOffset", "idOffset")]
         public User GetUser(int id)
         {
             return _service.GetUser(id);

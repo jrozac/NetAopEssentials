@@ -14,15 +14,51 @@ namespace NetAopEssentials.Cache
         /// Constructor
         /// </summary>
         /// <param name="keyTemplate"></param>
+        public CacheSetAttribute(string keyTemplate)
+        {
+            KeyTemplate = keyTemplate;
+            TimeoutMs = null;
+            Provider = null;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="keyTemplate"></param>
         /// <param name="timeoutMs"></param>
         /// <param name="provider"></param>
-        /// <param name="useCustomProvider"></param>
-        public CacheSetAttribute(string keyTemplate, long timeoutMs = 0, 
-            EnumCacheProvider provider = EnumCacheProvider.Memory, bool useCustomProvider = false)
+        public CacheSetAttribute(string keyTemplate, EnumCacheProvider provider)
+        {
+            KeyTemplate = keyTemplate;
+            TimeoutMs = null;
+            Provider =  provider;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="keyTemplate"></param>
+        /// <param name="timeoutMs"></param>
+        public CacheSetAttribute(string keyTemplate, long timeoutMs)
         {
             KeyTemplate = keyTemplate;
             TimeoutMs = timeoutMs;
-            Provider = useCustomProvider ? new EnumCacheProvider?(provider) : null;
+            Provider = null;
+        }
+
+        /// <summary>
+        /// 
+        /// Constructor
+        /// </summary>
+        /// <param name="keyTemplate"></param>
+        /// <param name="timeoutMs"></param>
+        /// <param name="provider"></param>
+        /// <param name="useCustomProvider"></param>
+        public CacheSetAttribute(string keyTemplate, long timeoutMs, EnumCacheProvider provider)
+        {
+            KeyTemplate = keyTemplate;
+            TimeoutMs = timeoutMs;
+            Provider = provider;
         }
 
         /// <summary>
@@ -38,6 +74,6 @@ namespace NetAopEssentials.Cache
         /// <summary>
         /// Timeout 
         /// </summary>
-        public long TimeoutMs { get; private set; }
+        public long? TimeoutMs { get; private set; }
     }
 }

@@ -40,7 +40,8 @@ namespace NetAopEssentials.Cache
             where TService : class
             where TImplementation : class, TService
         {
-            return RegisterCacheAspect<TService, TImplementation>(collection, null, provider, timeout).AddScoped();
+            var action = CreateDefaultSetupAction<TService, TImplementation>(timeout, provider);
+            return RegisterCacheAspect<TService, TImplementation>(collection, action).AddScoped();
         }
 
         /// <summary>
@@ -73,7 +74,8 @@ namespace NetAopEssentials.Cache
             where TService : class
             where TImplementation : class, TService
         {
-            return RegisterCacheAspect<TService, TImplementation>(collection, null, provider, timeout).AddTransient();
+            var action = CreateDefaultSetupAction<TService, TImplementation>(timeout, provider);
+            return RegisterCacheAspect<TService, TImplementation>(collection, action).AddTransient();
         }
 
         /// <summary>
@@ -106,7 +108,32 @@ namespace NetAopEssentials.Cache
             where TService : class
             where TImplementation : class, TService
         {
-            return RegisterCacheAspect<TService, TImplementation>(collection, null, provider, timeout).AddSingleton();
+            var action = CreateDefaultSetupAction<TService, TImplementation>(timeout, provider);
+            return RegisterCacheAspect<TService, TImplementation>(collection, action).AddSingleton();
+        }
+
+        /// <summary>
+        /// Create default setup action
+        /// </summary>
+        /// <typeparam name="TService"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="timeout"></param>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        private static Action<CacheSetup<TImplementation>> CreateDefaultSetupAction<TService,TImplementation>(
+            long timeout, EnumCacheProvider provider)
+            where TService : class
+            where TImplementation : class, TService
+        {
+
+            // create setup action
+            var setupAction = new Action<CacheSetup<TImplementation>>((setup) => {
+                setup.ImportAttributesSetup();
+                setup.CacheDefaultProvider(provider);
+                setup.CacheDefaultTimeout(timeout);
+            });
+            return setupAction;
+
         }
 
         /// <summary>
@@ -116,38 +143,17 @@ namespace NetAopEssentials.Cache
         /// <typeparam name="TImplementation"></typeparam>
         /// <param name="service"></param>
         /// <param name="setupAction"></param>
-        /// <param name="provider"></param>
-        /// <param name="timeout"></param>
         /// <returns></returns>
         private static AspectConfigurationBuilder<TService,TImplementation> RegisterCacheAspect<TService, TImplementation>(
-            IServiceCollection service, Action<CacheSetup<TImplementation>> setupAction = null, EnumCacheProvider? provider = null, long? timeout = null)
+            IServiceCollection service, Action<CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
         {
-
-            // create setup 
-            var setup = new CacheSetup<TImplementation>();
-            setupAction?.Invoke(setup);
-
-            // use attributes if setup action not defined
-            if(setupAction == null)
-            {
-                setup.ImportAttributesConfiguration();
-                if(provider.HasValue)
-                {
-                    setup.CacheDefaultProvider(provider.Value);
-                }
-                if(timeout.HasValue)
-                {
-                    setup.CacheDefaultTimeout(timeout.Value);
-                }
-            }
-
-            // create aspect 
-            var aspeect = setup.BuildAspect();
+            // create aspect
+            var aspect = new CacheAspect<TImplementation>(setupAction);
 
             // register aspect 
-            var builder = service.ConfigureAspectProxy<TService, TImplementation>().RegisterAspect(() => aspeect);
+            var builder = service.ConfigureAspectProxy<TService, TImplementation>().RegisterAspect(() => aspect);
             return builder;
         }
     }

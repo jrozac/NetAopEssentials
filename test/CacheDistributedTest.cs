@@ -15,10 +15,10 @@ namespace NetAopEssentialsTest
     {
 
         /// <summary>
-        /// Test that non serializable object throws an exception on configuration
+        /// Test that non serializable object throws an exception on setup
         /// </summary>
         [TestMethod]
-        public void TestNonSerializableObjectThrowsOnconfiguration()
+        public void TestNonSerializableObjectThrowsOnSetup()
         {
             try
             {

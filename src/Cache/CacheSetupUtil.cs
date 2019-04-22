@@ -13,43 +13,51 @@ namespace NetAopEssentials.Cache
     {
 
         /// <summary>
-        /// Create cache configuration
+        /// Create cache plan
         /// </summary>
         /// <typeparam name="TImplementation"></typeparam>
-        /// <param name="profile"></param>
+        /// <param name="setup"></param>
         /// <param name="defaults"></param>
         /// <returns></returns>
-        internal static MethodCacheConfiguration CreateCacheConfiguration<TImplementation>(MethodCacheProfile<TImplementation> profile, 
+        internal static MethodCachePlan CreateCachePlan<TImplementation>(MethodCacheSetup<TImplementation> setup, 
             CacheSetupDefaults defaults)
             where TImplementation : class
         {
 
-            // check if cacheable first. It throws an exception if type is not cacheable 
-            if (profile.Action == EnumCacheAction.Set)
+            // set plan
+            var plan = new MethodCachePlan
             {
-                CheckIfCacheable(profile.MethodInfo, profile.Provider ?? defaults.DefaultProvider);
-            }
-
-            // set configuration and return 
-            var cfg = new MethodCacheConfiguration
-            {
-                MethodInfo = profile.MethodInfo,
-                KeyTpl = profile.KeyTpl,
-                Action = profile.Action,
-                CacheResultFunc = profile.CacheResultFunc,
-                TimeoutMs = profile.Timeout > 0 ? profile.Timeout : defaults.DefaultTimeout,
-                TimeoutMsOffsetFunc = profile.TimeoutFunc,
-                KeyFunc = CreateKeyFunc(profile.MethodInfo, profile.Action, profile.KeyTpl),
-                Provider = profile.Provider ?? defaults.DefaultProvider,
+                MethodInfo = setup.MethodInfo,
+                KeyTpl = setup.KeyTpl,
+                Action = setup.Action,
+                CacheResultFunc = setup.CacheResultFunc,
+                TimeoutMs = setup.Timeout.HasValue ? setup.Timeout.Value : defaults.DefaultTimeout,
+                TimeoutMsOffsetFunc = setup.TimeoutFunc,
+                KeyFunc = CreateKeyFunc(setup.MethodInfo, setup.Action, setup.KeyTpl),
+                Provider = setup.Provider ?? defaults.DefaultProvider,
                 KeyPrefix = defaults.KeyCustomPrefix ?? $"{System.Diagnostics.Process.GetCurrentProcess().ProcessName}.{typeof(TImplementation)}.",
             };
-            return cfg;
+            
+            // chech timeout
+            if (plan.TimeoutMs <= 0)
+            {
+                throw new ArgumentException("Timeout has to be grater than zero.");
+            }
+
+            // check if cacheable, it throws an exception if type is not cacheable 
+            if (setup.Action == EnumCacheAction.Set)
+            {
+                CheckIfCacheable(setup.MethodInfo, setup.Provider ?? defaults.DefaultProvider);
+            }
+
+            // return
+            return plan;
         }
 
         /// <summary>
-        /// Reads attributes configuration 
+        /// Reads attributes setup 
         /// </summary>
-        internal static List<MethodCacheProfile<TImplementation>> GetAttributesProfiles<TImplementation>()
+        internal static List<MethodCacheSetup<TImplementation>> GetAttributesProfiles<TImplementation>()
             where TImplementation : class
         {
             // get methods to set cache
@@ -64,7 +72,7 @@ namespace NetAopEssentials.Cache
             var setProfiles = mehtodsToSet.Select(m =>
             {
                 var def = (CacheSetAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheSetAttribute));
-                var profile = new MethodCacheProfile<TImplementation>
+                var profile = new MethodCacheSetup<TImplementation>
                 {
                     Action = EnumCacheAction.Set,
                     KeyTpl = def.KeyTemplate,
@@ -79,7 +87,7 @@ namespace NetAopEssentials.Cache
             var removeProfiles = mehtodsToRemove.Select(m =>
             {
                 var def = (CacheRemoveAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheRemoveAttribute));
-                var profile = new MethodCacheProfile<TImplementation>
+                var profile = new MethodCacheSetup<TImplementation>
                 {
                     Action = EnumCacheAction.Remove,
                     KeyTpl = def.KeyTemplate,
@@ -102,7 +110,7 @@ namespace NetAopEssentials.Cache
         /// <param name="action"></param>
         /// <param name="keyTpl"></param>
         /// <returns></returns>
-        public static Func<object[], object, string> CreateKeyFunc(MethodInfo methodInfo, EnumCacheAction action, string keyTpl)
+        internal static Func<object[], object, string> CreateKeyFunc(MethodInfo methodInfo, EnumCacheAction action, string keyTpl)
         {
 
             // get fileds 
@@ -132,6 +140,32 @@ namespace NetAopEssentials.Cache
                 var key = string.Format(tpl, formatArgs);
                 return key;
             });
+        }
+
+        /// <summary>
+        /// Creates plan from setup
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="setup"></param>
+        /// <returns></returns>
+        internal static List<MethodCachePlan> SetupToPlan<TImplementation>(CacheSetup<TImplementation> setup)
+            where TImplementation : class
+        {
+
+            // set plans 
+            var plans = setup.MethodsCacheSetups.Select(profile =>
+                CreateCachePlan(profile, setup.Defaults)).ToList();
+
+            // import attributes plans
+            if (setup.Defaults.ReadAttributes)
+            {
+                var attrProfiles = GetAttributesProfiles<TImplementation>();
+                var attrCfgs = attrProfiles.Select(profile => CreateCachePlan(profile, setup.Defaults)).ToList();
+                plans.AddRange(attrCfgs);
+            }
+
+            // return
+            return plans;
         }
 
         /// <summary>

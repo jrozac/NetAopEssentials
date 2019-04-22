@@ -32,7 +32,6 @@ namespace NetAopEssentials.Cache
             // deserilaize
             return GeneralUtil.TryRun(provider, typeof(CacheSerializationUtil).Name, () =>
             {
-
                 using (var memStream = new MemoryStream())
                 {
                     var binForm = new BinaryFormatter();

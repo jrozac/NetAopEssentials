@@ -5,9 +5,9 @@ namespace NetAopEssentials.Cache
 {
 
     /// <summary>
-    /// Method cache configuration
+    /// Method cache plan
     /// </summary>
-    internal class MethodCacheConfiguration
+    internal class MethodCachePlan
     {
 
         /// <summary>

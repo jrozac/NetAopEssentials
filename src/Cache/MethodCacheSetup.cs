@@ -1,56 +1,51 @@
-﻿namespace NetAopEssentials.Cache
+﻿using System;
+using System.Reflection;
+
+namespace NetAopEssentials.Cache
 {
 
     /// <summary>
     /// Method cache setup
     /// </summary>
-    public class MethodCacheSetup
+    /// <typeparam name="TImplementation"></typeparam>
+    /// <typeparam name="TRet"></typeparam>
+    internal class MethodCacheSetup<TImplementation>
+        where TImplementation : class
     {
+        /// <summary>
+        /// Cache method 
+        /// </summary>
+        public MethodInfo MethodInfo { get; set; }
 
         /// <summary>
-        /// Internal constructor disables external creation
+        /// Key template 
         /// </summary>
-        internal MethodCacheSetup() { }
+        public string KeyTpl { get; set; }
 
         /// <summary>
-        /// Method info 
+        /// Timeout ms
         /// </summary>
-        public string Method { get; internal set; }
+        public long? Timeout { get; set; }
 
         /// <summary>
-        /// Cache key template
+        /// Cache provider
         /// </summary>
-        public string KeyTpl { get; internal set; }
+        public EnumCacheProvider? Provider { get; set; }
 
         /// <summary>
         /// Cache action
         /// </summary>
-        public EnumCacheAction Action { get; internal set; }
-
+        public EnumCacheAction Action { get; set; }
+        
         /// <summary>
-        /// Cache provider 
+        /// Function to determinate whether value should be cached or not.
         /// </summary>
-        public EnumCacheProvider Provider { get; internal set; }
-
+        public Func<object, bool> CacheResultFunc { get; set; }
+        
         /// <summary>
-        /// Function whihc returns whether the result should be cached or not.
+        /// Function which returns custom timeout for cache value.
         /// </summary>
-        public bool CacheResultFunc { get; internal set; }
-
-        /// <summary>
-        /// Cache timeout in milliseconds 
-        /// </summary>
-        public long TimeoutMs { get; internal set; }
-
-        /// <summary>
-        /// Key prefix
-        /// </summary>
-        public string KeyPrefix { get; internal set; }
-
-        /// <summary>
-        /// Added to timeout 
-        /// </summary>
-        public bool TimeoutMsOffsetFunc { get; internal set; }
+        public Func<object, long> TimeoutFunc { get; set; }
 
     }
 }

@@ -1,7 +1,4 @@
 ﻿using NetAopEssentialsTest.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NetAopEssentialsTest.Services
 {

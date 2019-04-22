@@ -7,7 +7,7 @@
     {
 
         /// <summary>
-        /// Read attributes for configuration
+        /// Read attributes for setup
         /// </summary>
         internal bool ReadAttributes { get; set; } = false;
 

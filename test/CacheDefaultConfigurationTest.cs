@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetAopEssentials;
 using NetAopEssentials.Cache;
 using NetAopEssentialsTest.Services;
 using System;
@@ -8,15 +7,18 @@ using System;
 namespace NetAopEssentialsTest
 {
 
+    /// <summary>
+    /// Cache Default setup tests 
+    /// </summary>
     [TestClass]
-    public class CacheDefaultConfigurationTest
+    public class CacheDefaultSetupTest
     {
 
         /// <summary>
-        /// Test that an exception is thrown if bad cach key configuration is used
+        /// Test that an exception is thrown if bad cach key setup is used
         /// </summary>
         [TestMethod]
-        public void TestBadConfigurationThrows()
+        public void TestBadSetupThrows()
         {
             try
             {

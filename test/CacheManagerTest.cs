@@ -29,8 +29,8 @@ namespace NetAopEssentialsTest
             var svc = provider.GetRequiredService<IUserService>();
 
             // check that setup is valid for key
-            Assert.AreEqual(1, manager.GetConfigurations().Count());
-            Assert.AreEqual("user-{id}", manager.GetConfigurations().First().KeyTpl);
+            Assert.AreEqual(1, manager.GetCacheSetupInfos().Count());
+            Assert.AreEqual("user-{id}", manager.GetCacheSetupInfos().First().KeyTpl);
 
             // check cache is available 
             UserService.MethodRunCountReset();

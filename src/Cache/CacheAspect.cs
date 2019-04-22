@@ -17,51 +17,40 @@ namespace NetAopEssentials.Cache
     {
 
         /// <summary>
-        /// Cache definitions 
+        /// Cache plans 
         /// </summary>
-        private Dictionary<string, MethodCacheConfiguration> _cacheDefinitions;
+        private Dictionary<string, MethodCachePlan> _cachePlans;
 
         /// <summary>
-        /// Constructor which injects definitions
+        /// Cache setup
         /// </summary>
-        /// <param name="cacheDefinitions"></param>
-        internal CacheAspect(List<MethodCacheConfiguration> cacheDefinitions)
-        {
-            ImportDefinitions(cacheDefinitions);
-        }
+        private CacheSetup<TImplementation> _setup;
 
         /// <summary>
-        /// Constructor default
+        /// Default constructor
         /// </summary>
         public CacheAspect()
         {
-            var defaults = new CacheSetupDefaults();
-            var cacheDefinitions = CacheSetupUtil.GetAttributesProfiles<TImplementation>().Select(profile =>
-                CacheSetupUtil.CreateCacheConfiguration(profile, defaults)).ToList();
-            ImportDefinitions(cacheDefinitions);
+            _setup = new CacheSetup<TImplementation>();
+            _setup.ImportAttributesSetup();
         }
 
         /// <summary>
-        /// Get key 
+        /// Constructor
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string GetFullKey(string key)
+        /// <param name="setupAction"></param>
+        public CacheAspect(Action<CacheSetup<TImplementation>> setupAction)
         {
-            var prefix = _cacheDefinitions.Count() > 0 ? _cacheDefinitions.First().Value.KeyPrefix : null;
-            return prefix != null ? prefix + key : null;
-        }
 
-        /// <summary>
-        /// Import definitions
-        /// </summary>
-        /// <param name="cacheDefinitions"></param>
-        private void ImportDefinitions(List<MethodCacheConfiguration> cacheDefinitions)
-        {
-            // set definitions
-            _cacheDefinitions = cacheDefinitions.ToDictionary(
-                cfg => string.Format("{0}.{1}", cfg.MethodInfo.ReflectedType.FullName, cfg.MethodInfo.ToString()),
-                cfg => cfg);
+            // create setup 
+            _setup = new CacheSetup<TImplementation>();
+            setupAction?.Invoke(_setup);
+
+            // use attributes if setup action not defined
+            if (setupAction == null)
+            {
+                _setup.ImportAttributesSetup();
+            }
         }
        
         /// <summary>
@@ -77,8 +66,8 @@ namespace NetAopEssentials.Cache
         public object AfterExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, bool returnNoRun)
         {
 
-            // check for definition
-            var cfg = GetConfiguration(instance, methodInfo);
+            // check for plans
+            var cfg = GetCachePlanForMethod(instance, methodInfo);
             if (cfg == null || returnNoRun)
             {
                 return retval;
@@ -113,14 +102,14 @@ namespace NetAopEssentials.Cache
         {
 
             // check for definition
-            var cfg = GetConfiguration(instance, methodInfo);
+            var cfg = GetCachePlanForMethod(instance, methodInfo);
             if(cfg == null || cfg.Action != EnumCacheAction.Set)
             {
                 returnNoRun = false;
                 return null;
             }
 
-            // get cached
+            // get cached value
             var retval = GetCachedValue(provider, methodInfo, cfg, args);
 
             // do not run method if value is cached
@@ -136,27 +125,65 @@ namespace NetAopEssentials.Cache
         public void Configure()
         {
 
+            // do nothing if setup does not exist
+            if(_setup == null)
+            {
+                return;
+            }
+
+            // create plans 
+            var plans = CacheSetupUtil.SetupToPlan(_setup);
+
+            // import plans
+            ImportPlans(plans);
+
+            // remove setup
+            _setup = null;
         }
 
         /// <summary>
-        /// Get method cache configuration
+        /// Get key 
         /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string GetFullKey(string key)
+        {
+            var prefix = _cachePlans.Count() > 0 ? _cachePlans.First().Value.KeyPrefix : null;
+            return prefix != null ? prefix + key : null;
+        }
+
+        /// <summary>
+        /// Import plans
+        /// </summary>
+        /// <param name="cachePlans"></param>
+        private void ImportPlans(List<MethodCachePlan> cachePlans)
+        {
+            // set plans
+            _cachePlans = cachePlans.ToDictionary(
+                cfg => string.Format("{0}.{1}", cfg.MethodInfo.ReflectedType.FullName, cfg.MethodInfo.ToString()),
+                cfg => cfg);
+        }
+
+        /// <summary>
+        /// Get method cache plan
+        /// </summary>
+        /// <param name="service"></param>
         /// <param name="methodInfo"></param>
         /// <returns></returns>
-        private MethodCacheConfiguration GetConfiguration(object service, MethodInfo methodInfo)
+        private MethodCachePlan GetCachePlanForMethod(object service, MethodInfo methodInfo)
         {
             var id = string.Format("{0}.{1}", service.GetType().FullName, methodInfo.ToString());
-            return _cacheDefinitions.ContainsKey(id) ? _cacheDefinitions[id] : null;
+            return _cachePlans.ContainsKey(id) ? _cachePlans[id] : null;
         }
 
         /// <summary>
-        /// Set cached value 
+        /// Set cached value
         /// </summary>
         /// <param name="provider"></param>
-        /// <param name="key"></param>
-        /// <param name="timeout"></param>
-        /// <param name="val"></param>
-        private void SetCachedValue(IServiceProvider provider, MethodCacheConfiguration cfg, object[] args, object retval)
+        /// <param name="cfg"></param>
+        /// <param name="args"></param>
+        /// <param name="retval"></param>
+        private void SetCachedValue(IServiceProvider provider, MethodCachePlan cfg, object[] args, object retval)
         {
             // get key
             var key = GetKey(provider, cfg, args, retval);
@@ -223,7 +250,7 @@ namespace NetAopEssentials.Cache
         /// <param name="cfg"></param>
         /// <param name="args"></param>
         /// <param name="retval"></param>
-        private void RemoveCachedValue(IServiceProvider provider, MethodCacheConfiguration cfg, object[] args, object retval)
+        private void RemoveCachedValue(IServiceProvider provider, MethodCachePlan cfg, object[] args, object retval)
         {
 
             // check key
@@ -263,7 +290,7 @@ namespace NetAopEssentials.Cache
         /// <param name="cfg"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        private object GetCachedValue(IServiceProvider provider, MethodInfo methodInfo, MethodCacheConfiguration cfg, object[] args)
+        private object GetCachedValue(IServiceProvider provider, MethodInfo methodInfo, MethodCachePlan cfg, object[] args)
         {
 
             // get key 
@@ -314,7 +341,7 @@ namespace NetAopEssentials.Cache
         /// <param name="args"></param>
         /// <param name="retval"></param>
         /// <returns></returns>
-        private string GetKey(IServiceProvider provider, MethodCacheConfiguration cfg, object[] args, object retval)
+        private string GetKey(IServiceProvider provider, MethodCachePlan cfg, object[] args, object retval)
         {
             // get key 
             string keyItem = GeneralUtil.TryRun<CacheAspect<TImplementation>, string>(provider, () => cfg.KeyFunc(args, retval), 
@@ -335,16 +362,17 @@ namespace NetAopEssentials.Cache
         /// Get cache setup
         /// </summary>
         /// <returns></returns>
-        internal List<MethodCacheSetup> GetCacheSetup() {
-            return _cacheDefinitions.Select(p => new MethodCacheSetup
+        internal List<MethodCacheSetupInfo> GetCacheSetupInfos() {
+            return _cachePlans.Select(p => new MethodCacheSetupInfo
             {
                 Action = p.Value.Action,
-                CacheResultFunc  = p.Value.CacheResultFunc != null,
                 KeyPrefix = p.Value.KeyPrefix,
                 KeyTpl = p.Value.KeyTpl,
-                Method = p.Key,
                 Provider = p.Value.Provider,
                 TimeoutMs = p.Value.TimeoutMs,
+                CacheResultFunc = p.Value.CacheResultFunc != null,
+                KeyFunc = p.Value.KeyFunc != null,
+                Method = p.Key,
                 TimeoutMsOffsetFunc = p.Value.TimeoutMsOffsetFunc != null
             }).ToList();
         }

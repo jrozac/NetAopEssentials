@@ -15,7 +15,7 @@ namespace NetAopEssentialsTest
     public class CacheAspectRegisterDefaultsTest
     {
         /// <summary>
-        /// Test attributes configuration caches
+        /// Test attributes setup caches
         /// </summary>
         [TestMethod]
         public void TestMethodReturnIsCached()
@@ -52,7 +52,7 @@ namespace NetAopEssentialsTest
         }
 
         /// <summary>
-        /// Test attributes configuration does not cache null
+        /// Test attributes setup does not cache null
         /// </summary>
         [TestMethod]
         public void TestMethodReturnIsNotCachedIfNull()
@@ -79,23 +79,38 @@ namespace NetAopEssentialsTest
         }
 
         /// <summary>
-        /// Test attributes configuration
+        /// Test attributes setup
         /// </summary>
         [TestMethod]
-        public void TestBadConfigurationThrowsExceptionOnRegister()
+        public void TestBadSetupThrowsExceptionOnRegister()
         {
 
             // create setup where default setup is used (attributes define cache)
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
-            try
-            {
+            Assert.ThrowsException<ArgumentException>(() => {
                 collection.ConfigureAspectProxy<IUserService, UserServiceWithBadAttributes>().
                     RegisterAspect<CacheAspect<UserServiceWithBadAttributes>>().AddScoped();
-                Assert.Fail();
-            } catch(Exception)
+            });
+        }
+
+        /// <summary>
+        /// Check that invalid setup timeout throw exception
+        /// </summary>
+        [TestMethod]
+        public void TestBadTimeoutThrowsExceptionOnRegister()
+        {
+
+            UserService.MethodRunCountReset();
+            IServiceCollection collection = new ServiceCollection();
+            collection.AddMemoryCache();
+            Assert.ThrowsException<ArgumentException>(() =>
             {
-            }
+                collection.AddScopedCached<IUserService, UserService>(s => s.
+                    SetFor(m => m.GetUser(0), "user-{id}", 0, null, (user) => user.Name == "User1")
+                );
+            });
+
         }
 
     }
