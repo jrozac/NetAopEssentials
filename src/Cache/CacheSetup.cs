@@ -114,7 +114,7 @@ namespace NetAopEssentials.Cache
                 setup.TimeoutFunc = (r) => timeoutFunc((TRet)r);
             }
 
-            // save profile and return
+            // save setup and return
             MethodsCacheSetups.Add(setup);
             return this;
         }
@@ -150,7 +150,7 @@ namespace NetAopEssentials.Cache
                 setup.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
             }
 
-            // save profile and return
+            // save setup and return
             MethodsCacheSetups.Add(setup);
             return this;
         }

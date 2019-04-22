@@ -57,7 +57,7 @@ namespace NetAopEssentials.Cache
         /// <summary>
         /// Reads attributes setup 
         /// </summary>
-        internal static List<MethodCacheSetup<TImplementation>> GetAttributesProfiles<TImplementation>()
+        internal static List<MethodCacheSetup<TImplementation>> GetAttributesSetups<TImplementation>()
             where TImplementation : class
         {
             // get methods to set cache
@@ -68,11 +68,11 @@ namespace NetAopEssentials.Cache
             var mehtodsToRemove = typeof(TImplementation).GetMethods().Where(m =>
                 m.GetCustomAttributes().FirstOrDefault(a => a.GetType() == typeof(CacheRemoveAttribute)) != null);
 
-            // configure set cache profiles
-            var setProfiles = mehtodsToSet.Select(m =>
+            // configure set cache setups
+            var setSetups = mehtodsToSet.Select(m =>
             {
                 var def = (CacheSetAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheSetAttribute));
-                var profile = new MethodCacheSetup<TImplementation>
+                var setup = new MethodCacheSetup<TImplementation>
                 {
                     Action = EnumCacheAction.Set,
                     KeyTpl = def.KeyTemplate,
@@ -80,26 +80,26 @@ namespace NetAopEssentials.Cache
                     Provider = def.Provider,
                     Timeout = def.TimeoutMs
                 };
-                return profile;
+                return setup;
             }).ToList();
 
-            // configure remove cache profiles
-            var removeProfiles = mehtodsToRemove.Select(m =>
+            // configure remove cache setups
+            var removeSetups = mehtodsToRemove.Select(m =>
             {
                 var def = (CacheRemoveAttribute)m.GetCustomAttributes().First(a => a.GetType() == typeof(CacheRemoveAttribute));
-                var profile = new MethodCacheSetup<TImplementation>
+                var setup = new MethodCacheSetup<TImplementation>
                 {
                     Action = EnumCacheAction.Remove,
                     KeyTpl = def.KeyTemplate,
                     MethodInfo = m,
                     Provider = def.Provider
                 };
-                return profile;
+                return setup;
             }).ToList();
 
             // merge and return 
-            removeProfiles.AddRange(setProfiles);
-            return removeProfiles;
+            removeSetups.AddRange(setSetups);
+            return removeSetups;
 
         }
 
@@ -146,21 +146,21 @@ namespace NetAopEssentials.Cache
         /// Creates plan from setup
         /// </summary>
         /// <typeparam name="TImplementation"></typeparam>
-        /// <param name="setup"></param>
+        /// <param name="cacheSetup"></param>
         /// <returns></returns>
-        internal static List<MethodCachePlan> SetupToPlan<TImplementation>(CacheSetup<TImplementation> setup)
+        internal static List<MethodCachePlan> SetupToPlan<TImplementation>(CacheSetup<TImplementation> cacheSetup)
             where TImplementation : class
         {
 
             // set plans 
-            var plans = setup.MethodsCacheSetups.Select(profile =>
-                CreateCachePlan(profile, setup.Defaults)).ToList();
+            var plans = cacheSetup.MethodsCacheSetups.Select(setup =>
+                CreateCachePlan(setup, cacheSetup.Defaults)).ToList();
 
             // import attributes plans
-            if (setup.Defaults.ReadAttributes)
+            if (cacheSetup.Defaults.ReadAttributes)
             {
-                var attrProfiles = GetAttributesProfiles<TImplementation>();
-                var attrCfgs = attrProfiles.Select(profile => CreateCachePlan(profile, setup.Defaults)).ToList();
+                var attrSetups = GetAttributesSetups<TImplementation>();
+                var attrCfgs = attrSetups.Select(setup => CreateCachePlan(setup, cacheSetup.Defaults)).ToList();
                 plans.AddRange(attrCfgs);
             }
 
