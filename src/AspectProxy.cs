@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,7 +7,7 @@ namespace NetAopEssentials
 {
 
     /// <summary>
-    /// Cache proxy 
+    /// Aspect proxy 
     /// </summary>
     public class AspectProxy : DispatchProxy
     {
@@ -37,26 +38,54 @@ namespace NetAopEssentials
             // get aspects to be exectued
             var aspects = _aspectsContainer.GetAspects(_service.GetType());
 
-            // declare return value
+            // execution environment vars
             object retval = null;
-
-            // return insted of run
-            bool rt = false;
+            bool mainMethodDisabled = false;
+            var runAfterMethod = aspects.Select(a => true).ToList();
 
             // before execution
             for (int i=0; i < aspects.Count; i++)
             {
-                retval = aspects[i].BeforeExecution(_serviceProvider, targetMethod, _service, args, out rt);
+                // run before execution 
+                bool disableMainMethod = false;
+                bool disableAfterExecution = false;
+                retval = aspects[i].BeforeExecution(_serviceProvider, targetMethod, _service, args, retval, mainMethodDisabled, out disableMainMethod, out disableAfterExecution);
+
+                // update environment vars
+                if(disableAfterExecution)
+                {
+                    runAfterMethod[i] = false;
+                }
+                mainMethodDisabled = mainMethodDisabled || disableMainMethod;
             }
 
             // execute function
-            if(!rt)
+            Exception mainMethodException = null;
+            if(!mainMethodDisabled)
             {
-                retval = targetMethod.Invoke(_service, args);
+                try
+                {
+                    retval = targetMethod.Invoke(_service, args);
+                } catch(Exception e)
+                {
+                    mainMethodException = e;
+                }
             }
 
-            // afer function execution
-            aspects.ForEach(a => retval = a.AfterExecution(_serviceProvider, targetMethod, _service, args, retval, rt));
+            // afer function execution (apsects in reversed order)
+            for(int i=aspects.Count-1; i >= 0; i--)
+            {
+                if(runAfterMethod[i])
+                {
+                    retval = aspects[i].AfterExecution(_serviceProvider, targetMethod, _service, args, retval, mainMethodDisabled, mainMethodException);
+                }
+            }
+
+            // throw main method exception if occured
+            if(mainMethodException != null)
+            {
+                throw mainMethodException;
+            }
 
             // return
             return retval;

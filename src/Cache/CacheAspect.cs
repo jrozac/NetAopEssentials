@@ -61,14 +61,21 @@ namespace NetAopEssentials.Cache
         /// <param name="instance"></param>
         /// <param name="args"></param>
         /// <param name="retval"></param>
-        /// <param name="returnNoRun"></param>
+        /// <param name="mainMethodDisabled"></param>
+        /// <param name="mainMethodException"></param>
         /// <returns></returns>
-        public object AfterExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, bool returnNoRun)
+        public object AfterExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, 
+            object retval, bool mainMethodDisabled, Exception mainMethodException)
         {
+            // main method not executed properly
+            if(mainMethodDisabled || mainMethodException != null)
+            {
+                return retval;
+            }
 
             // check for plans
             var cfg = GetCachePlanForMethod(instance, methodInfo);
-            if (cfg == null || returnNoRun)
+            if (cfg == null)
             {
                 return retval;
             }
@@ -96,27 +103,49 @@ namespace NetAopEssentials.Cache
         /// <param name="methodInfo"></param>
         /// <param name="instance"></param>
         /// <param name="args"></param>
-        /// <param name="returnNoRun"></param>
+        /// <param name="retval"></param>
+        /// <param name="mainMethodDisabled"></param>
+        /// <param name="disableMainMethod"></param>
+        /// <param name="disableAfterExecution"></param>
         /// <returns></returns>
-        public object BeforeExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, out bool returnNoRun)
+        public object BeforeExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, 
+            bool mainMethodDisabled, out bool disableMainMethod, out bool disableAfterExecution)
         {
+
+            // do not run if main method is disabled
+            if(mainMethodDisabled)
+            {
+                disableMainMethod = true;
+                disableAfterExecution = true;
+                return retval;
+            }
 
             // check for definition
             var cfg = GetCachePlanForMethod(instance, methodInfo);
-            if(cfg == null || cfg.Action != EnumCacheAction.Set)
+            if(cfg == null)
             {
-                returnNoRun = false;
-                return null;
+                disableMainMethod = false;
+                disableAfterExecution = true;
+                return retval;
+            }
+
+            // action remove (not set), run only after
+            if(cfg.Action != EnumCacheAction.Set)
+            {
+                disableMainMethod = false;
+                disableAfterExecution = false;
+                return retval;
             }
 
             // get cached value
-            var retval = GetCachedValue(provider, methodInfo, cfg, args);
+            var cachedRetval = GetCachedValue(provider, methodInfo, cfg, args);
 
             // do not run method if value is cached
-            returnNoRun = retval != null;
+            disableMainMethod = cachedRetval != null;
+            disableAfterExecution = disableMainMethod;
 
             // return
-            return retval;
+            return cachedRetval ?? retval;
         }
 
         /// <summary>

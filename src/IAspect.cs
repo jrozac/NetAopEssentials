@@ -30,21 +30,24 @@ namespace NetAopEssentials
         /// <param name="methodInfo"></param>
         /// <param name="instance"></param>
         /// <param name="args"></param>
-        /// <param name="returnNoRun"></param>
+        /// <param name="retval"></param>
+        /// <param name="disableMainMethod"></param>
+        /// <param name="disableAfterExecution"></param>
         /// <returns></returns>
-        object BeforeExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, out bool returnNoRun);
+        object BeforeExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, bool mainMethodDisabled, out bool disableMainMethod, out bool disableAfterExecution);
 
         /// <summary>
-        /// After function execution.
+        /// After execution
         /// </summary>
         /// <param name="provider"></param>
         /// <param name="methodInfo"></param>
         /// <param name="instance"></param>
         /// <param name="args"></param>
-        /// <param name="retval">Method return value</param>
-        /// <param name="returnNoRun"></param>
+        /// <param name="retval"></param>
+        /// <param name="mainMethodDisabled"></param>
+        /// <param name="mainMethodException"></param>
         /// <returns></returns>
-        object AfterExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, bool returnNoRun);
+        object AfterExecution(IServiceProvider provider, MethodInfo methodInfo, object instance, object[] args, object retval, bool mainMethodDisabled, Exception mainMethodException);
 
     }
 }
