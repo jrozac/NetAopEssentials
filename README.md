@@ -28,7 +28,7 @@ The following code shows caching of IUserService where methods for caching are d
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.AddMemoryCache();
-svc.ConfigureAspectProxy<IUserService, UserService>().RegisterAspect<CacheAspect<UserService>>().AddScoped();
+services.ConfigureAspectProxy<IUserService, UserService>().RegisterAspect<CacheAspect<UserService>>().AddScoped();
 services.BuildServiceProvider();
 ~~~
 
@@ -44,8 +44,7 @@ services.AddScopedCached<IUserService, UserService>((set) => set.
 	RemoveFor(m => m.UpdateRandomUser(), "user-{_ret.Id}").
 	CacheDefaultProvider(EnumCacheProvider.Memory).
 	CacheDefaultTimeout(CacheTimeout.Minute).
-	ImportAttributesConfiguration()
-);
+	ImportAttributesConfiguration());
 ~~~
 
 Not the key template syntax. For values in curly brackets real values from method parameters are used. 
