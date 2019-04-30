@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NetAopEssentials.Cache
 {
@@ -10,15 +11,18 @@ namespace NetAopEssentials.Cache
     /// <summary>
     /// Cache manager
     /// </summary>
+    /// <typeparam name="TService"></typeparam>
     /// <typeparam name="TImplementation"></typeparam>
-    public class CacheManager<TImplementation>
-        where TImplementation : class
+    public class CacheManager<TService,TImplementation>
+        where TService : class
+        where TImplementation : class, TService
     {
 
+        
         /// <summary>
-        /// Aspect
+        /// Cache aspect
         /// </summary>
-        private readonly CacheAspect<TImplementation> _cacheAspect;
+        private readonly CacheAspect<TService, TImplementation> _cacheAspect;
 
         /// <summary>
         /// Memory cache 
@@ -37,7 +41,8 @@ namespace NetAopEssentials.Cache
         internal CacheManager(IServiceProvider provider)
         {
             // get aspect
-            _cacheAspect = provider.GetRequiredService<AspectsContainer>().GetRegisteredAspect<TImplementation, CacheAspect<TImplementation>>();
+            _cacheAspect = provider.GetRequiredService<AspectsContainer<TService, TImplementation>>().Aspects.
+                FirstOrDefault(a => a.GetType() == typeof(CacheAspect<TService, TImplementation>)) as CacheAspect<TService, TImplementation>;
             if(_cacheAspect == null)
             {
                 throw new ArgumentException($"Aspect is not configured for {typeof(TImplementation)}.");

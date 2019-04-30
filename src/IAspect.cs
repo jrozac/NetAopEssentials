@@ -5,23 +5,18 @@ namespace NetAopEssentials
 {
 
     /// <summary>
-    /// Aspect interface 
+    /// Aspect interface
     /// </summary>
+    /// <typeparam name="TService"></typeparam>
     /// <typeparam name="TImplementation"></typeparam>
-    public interface IAspect<TImplementation> : IAspect
-        where TImplementation : class
+    public interface IAspect<TService,TImplementation>
+        where TService : class
+        where TImplementation : class, TService
     {
         /// <summary>
         /// Configure aspect for class 
         /// </summary>
         void Configure();
-    }
-
-    /// <summary>
-    /// Aspect interface 
-    /// </summary>
-    public interface IAspect
-    {
 
         /// <summary>
         /// Before execution

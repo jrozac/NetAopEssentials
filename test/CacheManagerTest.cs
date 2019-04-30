@@ -25,7 +25,7 @@ namespace NetAopEssentialsTest
 
             // setup
             var provider = GetNewProvider();
-            var manager = provider.GetCacheManager<UserService>();
+            var manager = provider.GetCacheManager<IUserService,UserService>();
             var svc = provider.GetRequiredService<IUserService>();
 
             // check that setup is valid for key

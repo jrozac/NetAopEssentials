@@ -25,7 +25,7 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.ConfigureAspectProxy<IUserService, UserServiceWithAttributes>().
-                RegisterAspect<CacheAspect<UserServiceWithAttributes>>().AddScoped();
+                RegisterAspect<CacheAspect<IUserService,UserServiceWithAttributes>>().AddScoped();
             var provider = collection.BuildServiceProvider();
             var svc = provider.GetRequiredService<IUserService>();
 
@@ -63,7 +63,7 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.ConfigureAspectProxy<IUserService, UserServiceWithAttributes>().
-                RegisterAspect<CacheAspect<UserServiceWithAttributes>>().AddScoped();
+                RegisterAspect<CacheAspect<IUserService,UserServiceWithAttributes>>().AddScoped();
             var provider = collection.BuildServiceProvider();
             var svc = provider.GetRequiredService<IUserService>();
 
@@ -90,7 +90,7 @@ namespace NetAopEssentialsTest
             collection.AddMemoryCache();
             Assert.ThrowsException<ArgumentException>(() => {
                 collection.ConfigureAspectProxy<IUserService, UserServiceWithBadAttributes>().
-                    RegisterAspect<CacheAspect<UserServiceWithBadAttributes>>().AddScoped();
+                    RegisterAspect<CacheAspect<IUserService, UserServiceWithBadAttributes>>().AddScoped();
             });
         }
 

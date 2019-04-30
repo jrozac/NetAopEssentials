@@ -12,8 +12,11 @@ namespace NetAopEssentials.Cache
     /// <summary>
     /// Cache aspect
     /// </summary>
-    public class CacheAspect<TImplementation> : IAspect<TImplementation>
-        where TImplementation : class
+    /// <typeparam name="TService"></typeparam>
+    /// <typeparam name="TImplementation"></typeparam>
+    public class CacheAspect<TService, TImplementation> : IAspect<TService,TImplementation>
+        where TService : class
+        where TImplementation : class, TService
     {
 
         /// <summary>
@@ -222,7 +225,7 @@ namespace NetAopEssentials.Cache
             }
 
             // do not set if condition not valid
-            bool quit = GeneralUtil.TryRun<CacheAspect<TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval), 
+            bool quit = GeneralUtil.TryRun<CacheAspect<TService,TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval), 
                 false, "Failed to exectue cache result func. Error message: {message}.");
             if(quit)
             {
@@ -233,12 +236,12 @@ namespace NetAopEssentials.Cache
             long timeoutOffset = 0;
             if(cfg.TimeoutMsOffsetFunc != null)
             {
-                timeoutOffset = GeneralUtil.TryRun<CacheAspect<TImplementation>, long>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
+                timeoutOffset = GeneralUtil.TryRun<CacheAspect<TService,TImplementation>, long>(provider, () => cfg.TimeoutMsOffsetFunc(retval), 0, "Failed to execute timeout offset func with error {messgae}.");
             }
             var timeout = cfg.TimeoutMs + timeoutOffset;
             if(timeout <= 0)
             {
-                GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Timeout is not valid for method {method}.", cfg.MethodInfo.Name);
+                GeneralUtil.LogError<CacheAspect<TService,TImplementation>>(provider, "Timeout is not valid for method {method}.", cfg.MethodInfo.Name);
                 return;
             }
 
@@ -252,7 +255,7 @@ namespace NetAopEssentials.Cache
                         memCache.Set(key, retval, TimeSpan.FromMilliseconds(timeout));
                     } else
                     {
-                        GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
+                        GeneralUtil.LogError<CacheAspect<TService,TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
                     }
                     break;
                 case EnumCacheProvider.Distributed:
@@ -266,7 +269,7 @@ namespace NetAopEssentials.Cache
                         });
                     } else
                     {
-                        GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
+                        GeneralUtil.LogError<CacheAspect<TService,TImplementation>>(provider, "Trying to cache null value for method {method}.", cfg.MethodInfo);
                     }
                     break;
             }
@@ -290,7 +293,7 @@ namespace NetAopEssentials.Cache
             }
 
             // do not remove if condition not valid
-            bool quit = GeneralUtil.TryRun<CacheAspect<TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval),
+            bool quit = GeneralUtil.TryRun<CacheAspect<TService,TImplementation>, bool>(provider, () => cfg.CacheResultFunc != null && !cfg.CacheResultFunc.Invoke(retval),
                 false, "Failed to exectue cache result func. Error message: {message}.");
             if (quit)
             {
@@ -354,7 +357,7 @@ namespace NetAopEssentials.Cache
             cached = cached.GetType() == methodInfo.ReturnType ? cached : null;
             if(cached == null)
             {
-                GeneralUtil.LogError<CacheAspect<TImplementation>>(provider, "Cached type is not valid for method {method}.", methodInfo.Name);
+                GeneralUtil.LogError<CacheAspect<TService,TImplementation>>(provider, "Cached type is not valid for method {method}.", methodInfo.Name);
             }
 
             // return
@@ -373,7 +376,7 @@ namespace NetAopEssentials.Cache
         private string GetKey(IServiceProvider provider, MethodCachePlan cfg, object[] args, object retval)
         {
             // get key 
-            string keyItem = GeneralUtil.TryRun<CacheAspect<TImplementation>, string>(provider, () => cfg.KeyFunc(args, retval), 
+            string keyItem = GeneralUtil.TryRun<CacheAspect<TService,TImplementation>, string>(provider, () => cfg.KeyFunc(args, retval), 
                 null, "Failed to get cache key with error: {message}.");
             if(string.IsNullOrWhiteSpace(keyItem))
             {

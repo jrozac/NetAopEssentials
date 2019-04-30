@@ -150,7 +150,7 @@ namespace NetAopEssentials.Cache
             where TImplementation : class, TService
         {
             // create aspect
-            var aspect = new CacheAspect<TImplementation>(setupAction);
+            var aspect = new CacheAspect<TService,TImplementation>(setupAction);
 
             // register aspect 
             var builder = service.ConfigureAspectProxy<TService, TImplementation>().RegisterAspect(() => aspect);

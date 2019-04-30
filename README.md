@@ -14,7 +14,8 @@ The following code registers a custom aspect for selected service.
 
 ~~~cs
 IServiceCollection services = new ServiceCollection();
-services.ConfigureAspectProxy<IDummyService, DummyService>().RegisterAspect<DummyAspect>().AddScoped();
+services.ConfigureAspectProxy<IUserService, UserService>().
+    RegisterAspect<Aspect1<IUserService,UserService>>().AddScoped();
 services.BuildServiceProvider();
 ~~~
 
@@ -28,7 +29,8 @@ The following code shows caching of IUserService where methods for caching are d
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.AddMemoryCache();
-svc.ConfigureAspectProxy<IUserService, UserService>().RegisterAspect<CacheAspect<UserService>>().AddScoped();
+services.ConfigureAspectProxy<IUserService, UserService>().
+    RegisterAspect<CacheAspect<IUserService,UserService>>().AddScoped();
 services.BuildServiceProvider();
 ~~~
 
@@ -39,13 +41,11 @@ configuration.
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.AddScopedCached<IUserService, UserService>((set) => set.
-	SetFor(m => m.GetUser(0), "user-{id}").
-	RemoveFor(m => m.Save(new User()), "user-{user.Id}").
-	RemoveFor(m => m.UpdateRandomUser(), "user-{_ret.Id}").
-	CacheDefaultProvider(EnumCacheProvider.Memory).
-	CacheDefaultTimeout(CacheTimeout.Minute).
-	ImportAttributesConfiguration()
-);
+    SetFor(m => m.GetUser(0), "user-{id}").
+    RemoveFor(m => m.UpdateUser(new User()), "user-{user.Id}").
+    RemoveFor(m => m.DeleteByName("user1"), "user-{_ret.Id}").
+    CacheDefaultProvider(EnumCacheProvider.Memory).
+    CacheDefaultTimeout(CacheTimeout.Minute).ImportAttributesSetup());
 ~~~
 
 Not the key template syntax. For values in curly brackets real values from method parameters are used. 

@@ -10,15 +10,17 @@ namespace NetAopEssentials.Cache
     {
 
         /// <summary>
-        /// Remove cachce
+        /// Get cache manager
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TService"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
         /// <param name="provider"></param>
-        /// <param name="key"></param>
-        public static CacheManager<TImplementation> GetCacheManager<TImplementation>(this IServiceProvider provider)
-            where TImplementation : class
+        /// <returns></returns>
+        public static CacheManager<TService,TImplementation> GetCacheManager<TService,TImplementation>(this IServiceProvider provider)
+            where TService : class
+            where TImplementation : class, TService
         {
-            return new CacheManager<TImplementation>(provider);
+            return new CacheManager<TService,TImplementation>(provider);
         }
 
     }

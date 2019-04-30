@@ -22,7 +22,7 @@ namespace NetAopEssentials
         /// <summary>
         /// Aspects container
         /// </summary>
-        private readonly AspectsContainer _aspectsContainer;
+        private readonly AspectsContainer<TService,TImplementation> _aspectsContainer;
 
         /// <summary>
         /// Internal constructor
@@ -31,7 +31,7 @@ namespace NetAopEssentials
         internal AspectConfigurationBuilder(IServiceCollection services)
         {
             _services = services;
-            _aspectsContainer = new AspectsContainer();
+            _aspectsContainer = new AspectsContainer<TService,TImplementation>();
         }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace NetAopEssentials
         /// <param name="customCreate"></param>
         /// <returns></returns>
         public AspectConfigurationBuilder<TService, TImplementation> RegisterAspect<TAspect>(Func<TAspect> customCreate = null)
-            where TAspect : class, IAspect<TImplementation>
+            where TAspect : class, IAspect<TService,TImplementation>
         {
-            _aspectsContainer.Configure<TService, TImplementation, TAspect>(customCreate);
+            _aspectsContainer.Configure(customCreate);
             return this;
         }
 
@@ -55,7 +55,7 @@ namespace NetAopEssentials
         {
             _services.AddSingleton(_aspectsContainer);
             _services.AddScoped<TImplementation, TImplementation>();
-            _services.AddScoped((provider) => AspectProxy.Create<TService,TImplementation>(provider));
+            _services.AddScoped((provider) => AspectProxy<TService,TImplementation>.Create(provider));
             return _services;
         }
 
@@ -67,7 +67,7 @@ namespace NetAopEssentials
         {
             _services.AddSingleton(_aspectsContainer);
             _services.AddTransient<TImplementation, TImplementation>();
-            _services.AddTransient((provider) => AspectProxy.Create<TService,TImplementation>(provider));
+            _services.AddTransient((provider) => AspectProxy<TService,TImplementation>.Create(provider));
             return _services;
         }
 
@@ -79,7 +79,7 @@ namespace NetAopEssentials
         {
             _services.AddSingleton(_aspectsContainer);
             _services.AddSingleton<TImplementation, TImplementation>();
-            _services.AddSingleton((provider) => AspectProxy.Create<TService,TImplementation>(provider));
+            _services.AddSingleton((provider) => AspectProxy<TService, TImplementation>.Create(provider));
             return _services;
         }
 

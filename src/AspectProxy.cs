@@ -7,9 +7,13 @@ namespace NetAopEssentials
 {
 
     /// <summary>
-    /// Aspect proxy 
+    /// Aspect proxy
     /// </summary>
-    public class AspectProxy : DispatchProxy
+    /// <typeparam name="TService"></typeparam>
+    /// <typeparam name="TImplementation"></typeparam>
+    public class AspectProxy<TService,TImplementation> : DispatchProxy
+        where TService : class
+        where TImplementation : class, TService
     {
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace NetAopEssentials
         /// <summary>
         /// Aspects container
         /// </summary>
-        private AspectsContainer _aspectsContainer;
+        private AspectsContainer<TService,TImplementation> _aspectsContainer;
 
         /// <summary>
         /// Invoke method 
@@ -36,7 +40,7 @@ namespace NetAopEssentials
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             // get aspects to be exectued
-            var aspects = _aspectsContainer.GetAspects(_service.GetType());
+            var aspects = _aspectsContainer.Aspects;
 
             // execution environment vars
             object retval = null;
@@ -95,23 +99,19 @@ namespace NetAopEssentials
         /// <summary>
         /// Create proxy instance 
         /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <typeparam name="TImplementation"></typeparam>
         /// <param name="sp"></param>
         /// <returns></returns>
-        public static TService Create<TService, TImplementation>(IServiceProvider sp)
-            where TService : class
-            where TImplementation : class,TService
+        public static TService Create(IServiceProvider sp)
         {
 
             // create instance 
             TService impl = ActivatorUtilities.CreateInstance<TImplementation>(sp);
 
             // create proxy 
-            object proxy = Create<TService, AspectProxy>();
-            ((AspectProxy)proxy)._service = impl;
-            ((AspectProxy)proxy)._serviceProvider = sp;
-            ((AspectProxy)proxy)._aspectsContainer = sp.GetRequiredService<AspectsContainer>();
+            object proxy = Create<TService, AspectProxy<TService,TImplementation>>();
+            ((AspectProxy<TService, TImplementation>)proxy)._service = impl;
+            ((AspectProxy<TService, TImplementation>)proxy)._serviceProvider = sp;
+            ((AspectProxy<TService, TImplementation>)proxy)._aspectsContainer = sp.GetRequiredService<AspectsContainer<TService,TImplementation>>();
 
             // return
             return (TService) proxy;
