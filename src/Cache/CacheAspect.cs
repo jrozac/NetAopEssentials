@@ -42,7 +42,7 @@ namespace NetAopEssentials.Cache
         /// Constructor
         /// </summary>
         /// <param name="setupAction"></param>
-        public CacheAspect(Action<CacheSetup<TImplementation>> setupAction)
+        internal CacheAspect(Func<CacheSetup<TImplementation>, CacheSetup<TImplementation>> setupAction)
         {
 
             // create setup 

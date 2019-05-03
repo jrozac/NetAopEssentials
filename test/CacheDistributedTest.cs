@@ -20,22 +20,16 @@ namespace NetAopEssentialsTest
         [TestMethod]
         public void TestNonSerializableObjectThrowsOnSetup()
         {
-            try
-            {
+
+            Assert.ThrowsException<InvalidOperationException>(() => {
                 IServiceCollection collection = new ServiceCollection();
                 collection.AddDistributedMemoryCache();
-                collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>(s => {
-                    s.SetFor(m => m.GetUser(0), "user-{id}").
-                        CacheDefaultProvider(EnumCacheProvider.Distributed);
-                });
-                Assert.Fail();
-            }
-            catch (Exception e)
-            {
-                Assert.IsTrue(e.Message.Contains("cannot be cached with provider Distributed"));
-            }
+                collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>(s =>
+                    s.SetFor(m => m.GetUser(0), "user-{id}").Configure().
+                    CacheDefaultProvider(EnumCacheProvider.Distributed));
+            });
+    
         }
-
 
         /// <summary>
         /// Test that method return is cached 
@@ -46,10 +40,9 @@ namespace NetAopEssentialsTest
             // setup 
             IServiceCollection collection = new ServiceCollection();
             collection.AddDistributedMemoryCache();
-            collection.AddScopedCached<IUserService, UserService>(s => {
-                s.SetFor(m => m.GetSerializableUser(0), "userser-{id}").
-                    CacheDefaultProvider(EnumCacheProvider.Distributed);
-            });
+            collection.AddScopedCached<IUserService, UserService>(s =>
+                s.SetFor(m => m.GetSerializableUser(0), "userser-{id}").Configure().
+                CacheDefaultProvider(EnumCacheProvider.Distributed));
             var provider = collection.BuildServiceProvider();
             var svc = provider.GetService<IUserService>();
 

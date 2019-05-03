@@ -15,7 +15,7 @@ The following code registers a custom aspect for selected service.
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.ConfigureAspectProxy<IUserService, UserService>().
-    RegisterAspect<Aspect1<IUserService,UserService>>().AddScoped();
+    RegisterAspect<AspectOne<IUserService, UserService>>().AddScoped();
 services.BuildServiceProvider();
 ~~~
 
@@ -30,8 +30,8 @@ The following code shows caching of IUserService where methods for caching are d
 IServiceCollection services = new ServiceCollection();
 services.AddMemoryCache();
 services.ConfigureAspectProxy<IUserService, UserService>().
-    RegisterAspect<CacheAspect<IUserService,UserService>>().AddScoped();
-services.BuildServiceProvider();
+    RegisterAspect<CacheAspect<IUserService, UserService>>().AddScoped();
+services.BuildServiceProvider()
 ~~~
 
 Note that the timeout is generally set to 60000 ms and MemoryCache is defined as default provider. However both values can be 
@@ -41,9 +41,9 @@ configuration.
 ~~~cs
 IServiceCollection services = new ServiceCollection();
 services.AddScopedCached<IUserService, UserService>((set) => set.
-    SetFor(m => m.GetUser(0), "user-{id}").
-    RemoveFor(m => m.UpdateUser(new User()), "user-{user.Id}").
-    RemoveFor(m => m.DeleteByName("user1"), "user-{_ret.Id}").
+    SetFor(m => m.GetUser(0), "user-{id}").Configure().
+    RemoveFor(m => m.UpdateUser(new User()), "user-{user.Id}").Configure().
+    RemoveFor(m => m.DeleteByName("user1"), "user-{_ret.Id}").Configure().
     CacheDefaultProvider(EnumCacheProvider.Memory).
     CacheDefaultTimeout(CacheTimeout.Minute).ImportAttributesSetup());
 ~~~

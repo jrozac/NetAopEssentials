@@ -18,8 +18,8 @@ namespace NetAopEssentials.Cache
         /// <param name="collection"></param>
         /// <param name="setupAction"></param>
         /// <returns></returns>
-        public static IServiceCollection AddScopedCached<TService,TImplementation>(this IServiceCollection collection, 
-            Action<CacheSetup<TImplementation>> setupAction = null)
+        public static IServiceCollection AddScopedCached<TService,TImplementation>(this IServiceCollection collection,
+            Func<CacheSetup<TImplementation>, CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
         {
@@ -53,7 +53,7 @@ namespace NetAopEssentials.Cache
         /// <param name="setupAction"></param>
         /// <returns></returns>
         public static IServiceCollection AddTransientCached<TService, TImplementation>(this IServiceCollection collection,
-            Action<CacheSetup<TImplementation>> setupAction = null)
+            Func<CacheSetup<TImplementation>, CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
         {
@@ -87,7 +87,7 @@ namespace NetAopEssentials.Cache
         /// <param name="setupAction"></param>
         /// <returns></returns>
         public static IServiceCollection AddSingletonCached<TService, TImplementation>(this IServiceCollection collection,
-            Action<CacheSetup<TImplementation>> setupAction = null)
+            Func<CacheSetup<TImplementation>, CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
         {
@@ -120,17 +120,18 @@ namespace NetAopEssentials.Cache
         /// <param name="timeout"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        private static Action<CacheSetup<TImplementation>> CreateDefaultSetupAction<TService,TImplementation>(
+        private static Func<CacheSetup<TImplementation>,CacheSetup<TImplementation>> CreateDefaultSetupAction<TService,TImplementation>(
             long timeout, EnumCacheProvider provider)
             where TService : class
             where TImplementation : class, TService
         {
 
             // create setup action
-            var setupAction = new Action<CacheSetup<TImplementation>>((setup) => {
+            var setupAction = new Func<CacheSetup<TImplementation>,CacheSetup<TImplementation>>((setup) => {
                 setup.ImportAttributesSetup();
                 setup.CacheDefaultProvider(provider);
                 setup.CacheDefaultTimeout(timeout);
+                return setup;
             });
             return setupAction;
 
@@ -145,7 +146,7 @@ namespace NetAopEssentials.Cache
         /// <param name="setupAction"></param>
         /// <returns></returns>
         private static AspectConfigurationBuilder<TService,TImplementation> RegisterCacheAspect<TService, TImplementation>(
-            IServiceCollection service, Action<CacheSetup<TImplementation>> setupAction = null)
+            IServiceCollection service, Func<CacheSetup<TImplementation>,CacheSetup<TImplementation>> setupAction = null)
             where TService : class
             where TImplementation : class, TService
         {

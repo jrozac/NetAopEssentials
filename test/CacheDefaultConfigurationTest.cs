@@ -20,15 +20,12 @@ namespace NetAopEssentialsTest
         [TestMethod]
         public void TestBadSetupThrows()
         {
-            try
-            {
+
+            Assert.ThrowsException<ArgumentException>(() => {
                 IServiceCollection collection = new ServiceCollection();
                 collection.AddMemoryCache();
                 collection.AddScopedCached<IUserService, UserServiceWithBadAttributes>();
-                Assert.Fail();
-            } catch(Exception)
-            {
-            }
+            });
         }
 
         /// <summary>

@@ -16,32 +16,6 @@ namespace NetAopEssentialsTest
     {
 
         /// <summary>
-        /// Aspect 1
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <typeparam name="TImplementation"></typeparam>
-        public class Aspect1<TService, TImplementation> : TestAspectVoid<TService, TImplementation>
-            where TService : class where TImplementation : class, TService
-        {
-            public Aspect1(Action before, Action after) : base(before, after)
-            {
-            }
-        };
-
-        /// <summary>
-        /// Aspect 2
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <typeparam name="TImplementation"></typeparam>
-        public class Aspect2<TService, TImplementation> : TestAspectVoid<TService, TImplementation>
-            where TService : class where TImplementation : class, TService
-        {
-            public Aspect2(Action before, Action after) : base(before, after)
-            {
-            }
-        };
-
-        /// <summary>
         /// Test that two different aspects can be registered
         /// </summary>
         [TestMethod]
@@ -55,8 +29,8 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.ConfigureAspectProxy<IUserService, UserServiceWithAttributes>().
-                RegisterAspect(() => new Aspect1<IUserService, UserServiceWithAttributes>(() => { before = before + 1; }, () => { after = after + 1; })).
-                RegisterAspect(() => new Aspect2<IUserService, UserServiceWithAttributes>(() => { before = before + 2; }, () => { after = after + 2; })).
+                RegisterAspect(() => new AspectOne<IUserService, UserServiceWithAttributes>(() => { before = before + 1; }, () => { after = after + 1; })).
+                RegisterAspect(() => new AspectTwo<IUserService, UserServiceWithAttributes>(() => { before = before + 2; }, () => { after = after + 2; })).
                 AddScoped();
             var provider = collection.BuildServiceProvider();
 
@@ -91,8 +65,8 @@ namespace NetAopEssentialsTest
                 IServiceCollection collection = new ServiceCollection();
                 collection.AddMemoryCache();
                 collection.ConfigureAspectProxy<IUserService, UserServiceWithAttributes>().
-                    RegisterAspect(() => new Aspect1<IUserService, UserServiceWithAttributes>(() => { }, () => { })).
-                    RegisterAspect(() => new Aspect1<IUserService, UserServiceWithAttributes>(() => { }, () => { }));
+                    RegisterAspect(() => new AspectOne<IUserService, UserServiceWithAttributes>(() => { }, () => { })).
+                    RegisterAspect(() => new AspectOne<IUserService, UserServiceWithAttributes>(() => { }, () => { }));
             });
         }
 
@@ -107,7 +81,7 @@ namespace NetAopEssentialsTest
             IServiceCollection collection = new ServiceCollection();
             collection.AddMemoryCache();
             collection.ConfigureAspectProxy<ITestSingletonVoidService, TestSingletonVoidService>().
-                RegisterAspect(() => new Aspect1<ITestSingletonVoidService, TestSingletonVoidService>(() => { }, () => { })).
+                RegisterAspect(() => new AspectOne<ITestSingletonVoidService, TestSingletonVoidService>(() => { }, () => { })).
                 AddSingleton();
             var provider = collection.BuildServiceProvider();
 

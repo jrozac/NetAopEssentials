@@ -76,84 +76,41 @@ namespace NetAopEssentials.Cache
         }
 
         /// <summary>
-        /// Defines method caching
+        /// Cache set setup for method
         /// </summary>
         /// <typeparam name="TRet"></typeparam>
-        /// <param name="methodExpr">Method definition</param>
+        /// <param name="methodExpr"></param>
         /// <param name="keyTpl">
         ///     Cache key template. Method properties can be used inside curly brackets.
         ///     E.g.:
         ///         Method: bool SaveUser(int id)
         ///         Key: User-{id}
         /// </param>
-        /// <param name="timeout">Timeout</param>
-        /// <param name="provider"></param>
-        /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
-        /// <param name="timeoutFunc">Function to determinate additional timeout time. Incoming parameters are function results.</param>
         /// <returns></returns>
-        public CacheSetup<TImplementation> SetFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr,
-            string keyTpl, long? timeout = null, EnumCacheProvider? provider = null,
-            Func<TRet, bool> cacheResultFunc = null, Func<TRet, long> timeoutFunc = null)
+        public MethodCacheSetSetup<TImplementation,TRet> SetFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr, string keyTpl)
         {
-
-            // set setup
-            var setup = new MethodCacheSetup<TImplementation>
-            {
-                MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
-                KeyTpl = keyTpl,
-                Timeout = timeout,
-                Provider = provider,
-                Action = EnumCacheAction.Set
-            };
-            if (cacheResultFunc != null)
-            {
-                setup.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
-            }
-            if (timeoutFunc != null)
-            {
-                setup.TimeoutFunc = (r) => timeoutFunc((TRet)r);
-            }
-
-            // save setup and return
-            MethodsCacheSetups.Add(setup);
-            return this;
+            var info = GeneralUtil.GetMethodInfo(methodExpr);
+            var methodSetup = new MethodCacheSetSetup<TImplementation, TRet>(info, keyTpl, this);
+            return methodSetup;
         }
 
         /// <summary>
-        /// Defines method to delete cache if method is executed.
+        /// Remove cache setup
         /// </summary>
         /// <typeparam name="TRet"></typeparam>
-        /// <param name="methodExpr">Method definition</param>
+        /// <param name="methodExpr"></param>
         /// <param name="keyTpl">
-        ///     Cache key template. Return value or retrun value properties or method properties can be used inside curly brackets.
+        ///     Cache key template. Method properties can be used inside curly brackets.
         ///     E.g.:
         ///         Method: bool SaveUser(int id)
         ///         Key: User-{id}
         /// </param>
-        /// <param name="provider"></param>
-        /// <param name="cacheResultFunc">Function to determinate whether the cache should be deleted or not.</param>
         /// <returns></returns>
-        public CacheSetup<TImplementation> RemoveFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr,
-            string keyTpl, EnumCacheProvider? provider = null, Func<TRet, bool> cacheResultFunc = null)
+        public MethodCacheRemoveSetup<TImplementation, TRet> RemoveFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr, string keyTpl)
         {
-
-            // set setup
-            var setup = new MethodCacheSetup<TImplementation>
-            {
-                MethodInfo = GeneralUtil.GetMethodInfo(methodExpr),
-                KeyTpl = keyTpl,
-                Provider = provider,
-                Action = EnumCacheAction.Remove
-            };
-            if (cacheResultFunc != null)
-            {
-                setup.CacheResultFunc = (r) => cacheResultFunc((TRet)r);
-            }
-
-            // save setup and return
-            MethodsCacheSetups.Add(setup);
-            return this;
+            var info = GeneralUtil.GetMethodInfo(methodExpr);
+            var methodSetup = new MethodCacheRemoveSetup<TImplementation, TRet>(info, keyTpl, this);
+            return methodSetup;
         }
-
     }
 }

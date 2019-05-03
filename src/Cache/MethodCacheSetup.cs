@@ -9,43 +9,51 @@ namespace NetAopEssentials.Cache
     /// </summary>
     /// <typeparam name="TImplementation"></typeparam>
     /// <typeparam name="TRet"></typeparam>
-    internal class MethodCacheSetup<TImplementation>
+    public class MethodCacheSetup<TImplementation>
         where TImplementation : class
     {
+
+        /// <summary>
+        /// Prevent external creation with internal constructor
+        /// </summary>
+        internal MethodCacheSetup()
+        {
+        }
+
         /// <summary>
         /// Cache method 
         /// </summary>
-        public MethodInfo MethodInfo { get; set; }
+        internal MethodInfo MethodInfo { get; set; }
 
         /// <summary>
         /// Key template 
         /// </summary>
-        public string KeyTpl { get; set; }
+        internal string KeyTpl { get; set; }
 
         /// <summary>
         /// Timeout ms
         /// </summary>
-        public long? Timeout { get; set; }
+        internal long? Timeout { get; set; }
 
         /// <summary>
         /// Cache provider
         /// </summary>
-        public EnumCacheProvider? Provider { get; set; }
+        internal EnumCacheProvider? Provider { get; set; }
 
         /// <summary>
         /// Cache action
         /// </summary>
-        public EnumCacheAction Action { get; set; }
-        
+        internal EnumCacheAction Action { get; set; }
+
         /// <summary>
         /// Function to determinate whether value should be cached or not.
         /// </summary>
-        public Func<object, bool> CacheResultFunc { get; set; }
+        internal Func<object, bool> CacheResultFunc { get; set; }
         
         /// <summary>
         /// Function which returns custom timeout for cache value.
         /// </summary>
-        public Func<object, long> TimeoutFunc { get; set; }
+        internal Func<object, long> TimeoutFunc { get; set; }
 
     }
 }

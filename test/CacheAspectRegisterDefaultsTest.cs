@@ -107,7 +107,7 @@ namespace NetAopEssentialsTest
             Assert.ThrowsException<ArgumentException>(() =>
             {
                 collection.AddScopedCached<IUserService, UserService>(s => s.
-                    SetFor(m => m.GetUser(0), "user-{id}", 0, null, (user) => user.Name == "User1")
+                    SetFor(m => m.GetUser(0), "user-{id}").SetTimeout(0).Configure()
                 );
             });
 
