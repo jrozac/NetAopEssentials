@@ -87,7 +87,7 @@ namespace NetAopEssentials.Cache
         ///         Key: User-{id}
         /// </param>
         /// <returns></returns>
-        public MethodCacheSetSetup<TImplementation,TRet> SetFor<TRet>(Expression<Func<TImplementation, TRet>> methodExpr, string keyTpl)
+        public MethodCacheSetSetup<TImplementation,TRet> SetFor<TRet>(Expression<Func<TImplementation,TRet>> methodExpr, string keyTpl)
         {
             var info = GeneralUtil.GetMethodInfo(methodExpr);
             var methodSetup = new MethodCacheSetSetup<TImplementation, TRet>(info, keyTpl, this);

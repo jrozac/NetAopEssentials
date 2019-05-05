@@ -31,7 +31,7 @@ IServiceCollection services = new ServiceCollection();
 services.AddMemoryCache();
 services.ConfigureAspectProxy<IUserService, UserService>().
     RegisterAspect<CacheAspect<IUserService, UserService>>().AddScoped();
-services.BuildServiceProvider()
+services.BuildServiceProvider();
 ~~~
 
 Note that the timeout is generally set to 60000 ms and MemoryCache is defined as default provider. However both values can be 
@@ -46,6 +46,7 @@ services.AddScopedCached<IUserService, UserService>((set) => set.
     RemoveFor(m => m.DeleteByName("user1"), "user-{_ret.Id}").Configure().
     CacheDefaultProvider(EnumCacheProvider.Memory).
     CacheDefaultTimeout(CacheTimeout.Minute).ImportAttributesSetup());
+services.BuildServiceProvider();
 ~~~
 
 Not the key template syntax. For values in curly brackets real values from method parameters are used. 

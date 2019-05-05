@@ -54,6 +54,7 @@ namespace NetAopEssentialsTest
                 RemoveFor(m => m.DeleteByName("user1"), "user-{_ret.Id}").Configure().
                 CacheDefaultProvider(EnumCacheProvider.Memory).
                 CacheDefaultTimeout(CacheTimeout.Minute).ImportAttributesSetup());
+            services.BuildServiceProvider();
         }
 
     }
